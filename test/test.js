@@ -260,6 +260,64 @@ describe('deprecate.function(fn, message)', function () {
   })
 })
 
+describe('process.on(\'deprecation\', fn)', function () {
+  var error
+  var stderr
+  before(function () {
+    process.on('deprecation', ondeprecation)
+    function callold() { mylib.old() }
+    stderr = captureStderr(callold)
+  })
+  after(function () {
+    process.removeListener('deprecation', ondeprecation)
+  })
+
+  function ondeprecation(err) { error = err }
+
+  it('should not write when listener exists', function () {
+    stderr.should.be.empty
+  })
+
+  it('should emit error', function () {
+    error.should.be.ok
+  })
+
+  it('should emit DeprecationError', function () {
+    error.name.should.equal('DeprecationError')
+  })
+
+  it('should emit DeprecationError', function () {
+    error.name.should.equal('DeprecationError')
+  })
+
+  it('should emit error with message', function () {
+    error.message.should.equal('old')
+  })
+
+  it('should emit error with namespace', function () {
+    error.namespace.should.equal('my-lib')
+  })
+
+  it('should emit error with proper [[Class]]', function () {
+    Object.prototype.toString.call(error).should.equal('[object Error]')
+  })
+
+  it('should emit error with proper stack', function () {
+    var stack = error.stack.split('\n')
+    stack[0].should.equal('DeprecationError: my-lib deprecated old')
+    stack[1].should.match(/    at callold \(.+test\.js:[0-9]+:[0-9]+\)/)
+  })
+
+  it('should have writable properties', function () {
+    error.name = 'bname'
+    error.name.should.equal('bname')
+    error.message = 'bmessage'
+    error.message.should.equal('bmessage')
+    error.stack = 'bstack'
+    error.stack.should.equal('bstack')
+  })
+})
+
 function captureStderr(fn, color) {
   var chunks = []
   var isTTY = process.stderr.isTTY

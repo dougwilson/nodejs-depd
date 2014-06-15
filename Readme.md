@@ -60,6 +60,34 @@ Call this function to wrap a given function in a deprecation message on any
 call to the function. An optional message can be supplied to provide a custom
 message.
 
+### process.on('deprecation', fn)
+
+This module will allow easy capturing of deprecation errors by emitting the
+errors as the type "deprecation" on the global `process`. If there are no
+listeners for this type, the errors are written to STDERR as normal, but if
+there are any listeners, nothing will be written to STDERR and instead only
+emitted. From there, you can write the errors in a different format or to a
+logging source.
+
+The error represents the deprecation and is emitted only once with the same
+rules as writing to STDERR. The error has the following properties:
+
+  - `message` - This is the message given by the library
+  - `name` - This is always `'DeprecationError'`
+  - `namespace` - This is the namespace the deprecation came from
+  - `stack` - This is the stack of the call to the deprecated thing
+
+Example `error.stack` output:
+
+```
+DeprecationError: my-cool-module deprecated oldfunction
+    at Object.<anonymous> ([eval]-wrapper:6:22)
+    at Module._compile (module.js:456:26)
+    at evalScript (node.js:532:25)
+    at startup (node.js:80:7)
+    at node.js:902:3
+```
+
 ## Display
 
 When a user calls a function in your library that you mark deprecated, they

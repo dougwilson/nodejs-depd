@@ -8,6 +8,7 @@
  * Module dependencies.
  */
 
+var EventEmitter = require('events').EventEmitter
 var relative = require('path').relative
 var supportsColor = require('supports-color')
 
@@ -24,6 +25,14 @@ module.exports = depd
 var basePath = process.cwd()
 
 /**
+ * Get listener count on event emitter.
+ */
+
+/*istanbul ignore next*/
+var eventListenerCount = EventEmitter.listenerCount
+  || function (emitter, type) { return emitter.listeners(type).length }
+
+/**
  * Create arguments string to keep arity.
  */
 
@@ -35,6 +44,24 @@ function createArgumentsString(arity) {
   }
 
   return str.substr(2)
+}
+
+/**
+ * Create stack string from stack.
+ */
+
+function createStackString(stack) {
+  var str = this.name + ': ' + this.namespace
+
+  if (this.message) {
+    str += ' deprecated ' + this.message
+  }
+
+  for (var i = 0; i < stack.length; i++) {
+    str += '\n    at ' + stack[i].toString()
+  }
+
+  return str
 }
 
 /**
@@ -115,6 +142,13 @@ function log(message, site) {
     message = callSite === site || !callSite.name
       ? defaultMessage(site)
       : defaultMessage(callSite)
+  }
+
+  // emit deprecation if listeners exist
+  if (eventListenerCount(process, 'deprecation') !== 0) {
+    var err = DeprecationError(this._namespace, message, stack.slice(i))
+    process.emit('deprecation', err)
+    return
   }
 
   // format and write message
@@ -254,4 +288,56 @@ function wrapfunction(fn, message) {
     + '})')
 
   return deprecatedfn
+}
+
+/**
+ * Create DeprecationError for deprecation
+ */
+
+function DeprecationError(namespace, message, stack) {
+  var error = new Error()
+  var stackString
+
+  Object.defineProperty(error, 'constructor', {
+    value: DeprecationError
+  })
+
+  Object.defineProperty(error, 'message', {
+    configurable: true,
+    enumerable: false,
+    value: message,
+    writable: true
+  })
+
+  Object.defineProperty(error, 'name', {
+    enumerable: false,
+    configurable: true,
+    value: 'DeprecationError',
+    writable: true
+  })
+
+  Object.defineProperty(error, 'namespace', {
+    configurable: true,
+    enumerable: false,
+    value: namespace,
+    writable: true
+  })
+
+  Object.defineProperty(error, 'stack', {
+    configurable: true,
+    enumerable: false,
+    get: function () {
+      if (stackString !== undefined) {
+        return stackString
+      }
+
+      // prepare stack trace
+      return stackString = createStackString.call(this, stack)
+    },
+    set: function setter(val) {
+      stackString = val
+    }
+  })
+
+  return error
 }
