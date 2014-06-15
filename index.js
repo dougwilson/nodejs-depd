@@ -56,11 +56,11 @@ function log(message) {
   var caller
   var seen = false
   var stack = getStack()
-  var site = callSiteLocation(stack[1])
+  var site = callSiteLocation(stack[2])
   var file = this._file
 
   // get caller of deprecated thing in relation to file
-  for (var i = 1; i < stack.length; i++) {
+  for (var i = 2; i < stack.length; i++) {
     caller = callSiteLocation(stack[i])
 
     if (caller[0] === file) {

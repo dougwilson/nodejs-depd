@@ -1,3 +1,8 @@
+unreleased
+==========
+
+  * Fix warning for dynamic calls at singe call site
+
 0.0.0 / 2014-06-15
 ==================
 

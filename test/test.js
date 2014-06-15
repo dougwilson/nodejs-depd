@@ -58,6 +58,20 @@ describe('deprecate(message)', function () {
     stderr.split('invoke').should.have.length(6)
   })
 
+  it('should warn for differnt fns on same call site', function () {
+    var prop
+
+    function callold() {
+      mylib[prop]() // call from same site
+    }
+
+    prop = 'old'
+    captureStderr(callold).should.containEql(basename(__filename))
+
+    prop = 'old2'
+    captureStderr(callold).should.containEql(basename(__filename))
+  })
+
   describe('when output supports colors', function () {
     var stderr
     before(function () {
