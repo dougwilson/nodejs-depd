@@ -24,6 +24,20 @@ module.exports = depd
 var basePath = process.cwd()
 
 /**
+ * Create arguments string to keep arity.
+ */
+
+function createArgumentsString(arity) {
+  var str = ''
+
+  for (var i = 0; i < arity; i++) {
+    str += ', arg' + i
+  }
+
+  return str.substr(2)
+}
+
+/**
  * Create deprecate for namespace in caller.
  */
 
@@ -45,6 +59,8 @@ function depd(namespace) {
   deprecate._namespace = namespace
   deprecate._warned = Object.create(null)
 
+  deprecate.function = wrapfunction
+
   return deprecate
 }
 
@@ -52,15 +68,28 @@ function depd(namespace) {
  * Display deprecation message.
  */
 
-function log(message) {
+function log(message, site) {
   var caller
+  var callSite
+  var i = 0
   var seen = false
   var stack = getStack()
-  var site = callSiteLocation(stack[2])
   var file = this._file
 
+  if (site) {
+    // provided site
+    callSite = callSiteLocation(stack[1])
+    callSite.name = site.name
+    file = callSite[0]
+  } else {
+    // get call site
+    i = 2
+    site = callSiteLocation(stack[i])
+    callSite = site
+  }
+
   // get caller of deprecated thing in relation to file
-  for (var i = 2; i < stack.length; i++) {
+  for (; i < stack.length; i++) {
     caller = callSiteLocation(stack[i])
 
     if (caller[0] === file) {
@@ -83,7 +112,9 @@ function log(message) {
 
   // generate automatic message from call site
   if (!message) {
-    message = defaultMessage(site)
+    message = callSite === site || !callSite.name
+      ? defaultMessage(site)
+      : defaultMessage(callSite)
   }
 
   // format and write message
@@ -112,6 +143,7 @@ function callSiteLocation(callSite) {
   var site = [file, line, colm]
 
   site.callSite = callSite
+  site.name = callSite.getFunctionName()
 
   return site
 }
@@ -122,7 +154,7 @@ function callSiteLocation(callSite) {
 
 function defaultMessage(site) {
   var callSite = site.callSite
-  var funcName = callSite.getFunctionName()
+  var funcName = site.name
 
   // make useful anonymous name
   if (!funcName) {
@@ -202,4 +234,24 @@ function getStack() {
 
 function prepareObjectStackTrace(obj, stack) {
   return stack
+}
+
+/**
+ * Return a wrapped function in a deprecation message.
+ */
+
+function wrapfunction(fn, message) {
+  var args = createArgumentsString(fn.length)
+  var deprecate = this
+  var stack = getStack()
+  var site = callSiteLocation(stack[1])
+
+  site.name = fn.name
+
+  var deprecatedfn = eval('(function (' + args + ') {\n'
+    + 'log.call(deprecate, message, site)\n'
+    + 'return fn.apply(this, arguments)\n'
+    + '})')
+
+  return deprecatedfn
 }

@@ -1,6 +1,7 @@
 unreleased
 ==========
 
+  * Add `deprecate.function(fn, message)`
   * Automatically generate message when omitted from `deprecate()`
 
 0.0.1 / 2014-06-15

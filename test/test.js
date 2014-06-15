@@ -197,6 +197,69 @@ describe('deprecate(message)', function () {
   })
 })
 
+describe('deprecate.function(fn, message)', function () {
+  it('should log on call to function', function () {
+    function callold() { mylib.oldfn() }
+    captureStderr(callold).should.containEql(' oldfn ')
+  })
+
+  it('should have same arity', function () {
+    mylib.oldfn.should.have.length(2)
+  })
+
+  it('should pass arguments', function () {
+    var ret
+    function callold() { ret = mylib.oldfn(1, 2) }
+    captureStderr(callold).should.containEql(' oldfn ')
+    ret.should.equal(2)
+  })
+
+  it('should only warn once per call site', function () {
+    function callold() {
+      for (var i = 0; i < 5; i++) {
+        mylib.oldfn() // single call site
+        process.stderr.write('invoke ' + i + '\n')
+      }
+    }
+
+    var stderr = captureStderr(callold)
+    stderr.split('deprecated').should.have.length(2)
+    stderr.split('invoke').should.have.length(6)
+  })
+
+  it('should warn for different calls on same line', function () {
+    function callold() {
+      mylib.oldfn(), mylib.oldfn()
+    }
+
+    var stderr = captureStderr(callold)
+    var fileline = stderr.match(/\.js:[0-9]+:/)
+    stderr.should.containEql(basename(__filename))
+    stderr.split('deprecated').should.have.length(3)
+    stderr.split(fileline[0]).should.have.length(3)
+  })
+
+  describe('when message omitted', function () {
+    it('should generate message for method call on named function', function () {
+      function callold() { mylib.oldfnauto() }
+      var stderr = captureStderr(callold)
+      stderr.should.containEql(basename(__filename))
+      stderr.should.containEql('deprecated')
+      stderr.should.containEql(' Object.fn ')
+      stderr.should.match(/ at [^:]+test\.js:/)
+    })
+
+    it('should generate message for method call on anonymous function', function () {
+      function callold() { mylib.oldfnautoanon() }
+      var stderr = captureStderr(callold)
+      stderr.should.containEql(basename(__filename))
+      stderr.should.containEql('deprecated')
+      stderr.should.match(/ <anonymous@[^:]+my-lib\.js:[0-9]+:[0-9]+> /)
+      stderr.should.match(/ at [^:]+test\.js:/)
+    })
+  })
+})
+
 function captureStderr(fn, color) {
   var chunks = []
   var isTTY = process.stderr.isTTY

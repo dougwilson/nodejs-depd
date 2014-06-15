@@ -54,6 +54,12 @@ If the message is omitted, a message is generated for you based on the site
 of the `deprecate()` call and will display the name of the function called,
 similar to the name displayed in a stack trace.
 
+### deprecate.function(fn, message)
+
+Call this function to wrap a given function in a deprecation message on any
+call to the function. An optional message can be supplied to provide a custom
+message.
+
 ## Display
 
 When a user calls a function in your library that you mark deprecated, they
@@ -95,10 +101,16 @@ from "my-module" on STDERR.
 ```js
 var deprecate = require('depd')('my-cool-module')
 
-exports.oldfunction = function () {
+// message automatically derived from function name
+// Object.oldfunction
+exports.oldfunction = deprecate.function(function oldfunction() {
   // all calls to function are deprecated
-  deprecate('oldfunction')
-}
+})
+
+// specific message
+exports.oldfunction = deprecate.function(function () {
+  // all calls to function are deprecated
+}, 'oldfunction')
 ```
 
 ### Conditionally deprecating a function call
