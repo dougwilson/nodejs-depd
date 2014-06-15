@@ -50,6 +50,10 @@ This message will appear once per unique caller site. Caller site is the
 first call site in the stack in a different file from the caller of this
 function.
 
+If the message is omitted, a message is generated for you based on the site
+of the `deprecate()` call and will display the name of the function called,
+similar to the name displayed in a stack trace.
+
 ## Display
 
 When a user calls a function in your library that you mark deprecated, they

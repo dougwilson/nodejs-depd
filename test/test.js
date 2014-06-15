@@ -84,6 +84,54 @@ describe('deprecate(message)', function () {
     stderr.split(fileline[0]).should.have.length(3)
   })
 
+  describe('when message omitted', function () {
+    it('should generate message for method call on named function', function () {
+      function callold() { mylib.automsgnamed() }
+      var stderr = captureStderr(callold)
+      stderr.should.containEql(basename(__filename))
+      stderr.should.containEql('deprecated')
+      stderr.should.containEql(' Object.automsgnamed ')
+    })
+
+    it('should generate message for function call on named function', function () {
+      function callold() {
+        var fn = mylib.automsgnamed
+        fn()
+      }
+      var stderr = captureStderr(callold)
+      stderr.should.containEql(basename(__filename))
+      stderr.should.containEql('deprecated')
+      stderr.should.containEql(' automsgnamed ')
+    })
+
+    it('should generate message for method call on unnamed function', function () {
+      function callold() { mylib.automsg() }
+      var stderr = captureStderr(callold)
+      stderr.should.containEql(basename(__filename))
+      stderr.should.containEql('deprecated')
+      stderr.should.containEql(' Object.exports.automsg ')
+    })
+
+    it('should generate message for function call on unnamed function', function () {
+      function callold() {
+        var fn = mylib.automsg
+        fn()
+      }
+      var stderr = captureStderr(callold)
+      stderr.should.containEql(basename(__filename))
+      stderr.should.containEql('deprecated')
+      stderr.should.containEql(' exports.automsg ')
+    })
+
+    it('should generate message for function call on anonymous function', function () {
+      function callold() { mylib.automsganon() }
+      var stderr = captureStderr(callold)
+      stderr.should.containEql(basename(__filename))
+      stderr.should.containEql('deprecated')
+      stderr.should.match(/ exports\.automsganon | <anonymous@[^:]+:[0-9]+:[0-9]+> /)
+    })
+  })
+
   describe('when output supports colors', function () {
     var stderr
     before(function () {

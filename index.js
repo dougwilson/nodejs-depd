@@ -81,6 +81,11 @@ function log(message) {
 
   this._warned[key] = true
 
+  // generate automatic message from call site
+  if (!message) {
+    message = defaultMessage(site)
+  }
+
   // format and write message
   var format = supportsColor && process.stderr.isTTY
     ? formatColor
@@ -104,7 +109,29 @@ function callSiteLocation(callSite) {
     file = callSite.getEvalOrigin() + ', ' + file
   }
 
-  return [file, line, colm]
+  var site = [file, line, colm]
+
+  site.callSite = callSite
+
+  return site
+}
+
+/**
+ * Generate a default message from the site.
+ */
+
+function defaultMessage(site) {
+  var callSite = site.callSite
+  var funcName = callSite.getFunctionName()
+
+  // make useful anonymous name
+  if (!funcName) {
+    funcName = '<anonymous@' + formatLocation(site) + '>'
+  }
+
+  return callSite.getMethodName()
+    ? callSite.getTypeName() + '.' + funcName
+    : funcName
 }
 
 /**
