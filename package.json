@@ -4,6 +4,10 @@
   "version": "0.0.0",
   "author": "Douglas Christopher Wilson <doug@somethingdoug.com>",
   "license": "MIT",
+  "keywords": [
+    "deprecate",
+    "deprecated"
+  ],
   "repository": "dougwilson/nodejs-depd",
   "dependencies": {
     "supports-color": "0.2.0"
