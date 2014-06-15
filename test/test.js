@@ -58,7 +58,7 @@ describe('deprecate(message)', function () {
     stderr.split('invoke').should.have.length(6)
   })
 
-  it('should warn for differnt fns on same call site', function () {
+  it('should warn for different fns on same call site', function () {
     var prop
 
     function callold() {
@@ -70,6 +70,18 @@ describe('deprecate(message)', function () {
 
     prop = 'old2'
     captureStderr(callold).should.containEql(basename(__filename))
+  })
+
+  it('should warn for different calls on same line', function () {
+    function callold() {
+      mylib.old(), mylib.old()
+    }
+
+    var stderr = captureStderr(callold)
+    var fileline = stderr.match(/\.js:[0-9]+:/)
+    stderr.should.containEql(basename(__filename))
+    stderr.split('deprecated').should.have.length(3)
+    stderr.split(fileline[0]).should.have.length(3)
   })
 
   describe('when output supports colors', function () {
