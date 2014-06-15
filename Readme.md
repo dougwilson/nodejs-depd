@@ -50,29 +50,11 @@ This message will appear once per unique caller site. Caller site is the
 first call site in the stack in a different file from the caller of this
 function.
 
-## Examples
+## Display
 
-This will display a deprecated message about "oldfunction" being deprecated
-from "my-module" on STDERR.
-
-```js
-var deprecate = require('depd')('my-cool-module')
-
-exports.oldfunction = function () {
-  // all calls to function are deprecated
-  deprecate('oldfunction')
-}
-
-exports.weirdfunction = function () {
-  if (arguments.length < 2) {
-    // calls with 0 or 1 args are deprectaed
-    deprecate('weirdfunction args < 2')
-  }
-}
-```
-
-Then a user calls `mymodule.oldfunction()` and sees (in the given colors,
-similar colors and layout to the `debug` module):
+When a user calls a function in your library that you mark deprecated, they
+will see the following written to STDERR (in the given colors, similar colors
+and layout to the `debug` module):
 
 ```
 bright cyan    bright yellow
@@ -97,6 +79,82 @@ Sun, 15 Jun 2014 05:21:37 GMT my-cool-module deprecated oldfunction at [eval]-wr
 timestamp of message          namespace      |          |             location of mycoolmod.oldfunction() call
                                              |          deprecation message
                                              the word "deprecated"
+```
+
+## Examples
+
+### Deprecating all calls to a function
+
+This will display a deprecated message about "oldfunction" being deprecated
+from "my-module" on STDERR.
+
+```js
+var deprecate = require('depd')('my-cool-module')
+
+exports.oldfunction = function () {
+  // all calls to function are deprecated
+  deprecate('oldfunction')
+}
+```
+
+### Conditionally deprecating a function call
+
+This will display a deprecated message about "weirdfunction" being deprecated
+from "my-module" on STDERR when called with less than 2 arguments.
+
+```js
+var deprecate = require('depd')('my-cool-module')
+
+exports.weirdfunction = function () {
+  if (arguments.length < 2) {
+    // calls with 0 or 1 args are deprecated
+    deprecate('weirdfunction args < 2')
+  }
+}
+```
+
+When calling `deprecate` as a function, the warning is counted per call site
+within your own module, so you can display different deprecations depending
+on different situations and the users will still get all the warnings:
+
+```js
+var deprecate = require('depd')('my-cool-module')
+
+exports.weirdfunction = function () {
+  if (arguments.length < 2) {
+    // calls with 0 or 1 args are deprecated
+    deprecate('weirdfunction args < 2')
+  } else if (typeof arguments[0] !== 'string') {
+    // calls with non-string first argument are deprecated
+    deprecate('weirdfunction non-string first arg')
+  }
+}
+```
+
+### Deprecating property access
+
+This will display a deprecated message about "oldprop" being deprecated
+from "my-module" on STDERR when accessed. A deprecation will be displayed
+when setting the value and when getting the value.
+
+```js
+var deprecate = require('depd')('my-cool-module')
+
+;(function () {
+  var value = 'something'
+  Object.defineProperty(exports, 'oldprop', {
+    configurable: true,
+    enumerable: true,
+    get: function () {
+      deprecate('get oldprop')
+      return value
+    },
+    set: function (val) {
+      deprecate('set oldprop')
+      return value = val
+    }
+  })
+}())
 ```
 
 ## License
