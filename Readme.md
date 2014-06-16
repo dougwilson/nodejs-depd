@@ -60,6 +60,18 @@ Call this function to wrap a given function in a deprecation message on any
 call to the function. An optional message can be supplied to provide a custom
 message.
 
+### deprecate.property(obj, prop, message)
+
+Call this function to wrap a given property on object in a deprecation message
+on any accessing or setting of the property. An optional message can be supplied
+to provide a custom message.
+
+The method must be called on the object where the property belongs (not
+inherited from the prototype).
+
+If the property is a data descriptor, it will be converted to an accessor
+descriptor in order to display the deprecation message.
+
 ### process.on('deprecation', fn)
 
 This module will allow easy capturing of deprecation errors by emitting the
@@ -184,21 +196,13 @@ when setting the value and when getting the value.
 ```js
 var deprecate = require('depd')('my-cool-module')
 
-;(function () {
-  var value = 'something'
-  Object.defineProperty(exports, 'oldprop', {
-    configurable: true,
-    enumerable: true,
-    get: function () {
-      deprecate('get oldprop')
-      return value
-    },
-    set: function (val) {
-      deprecate('set oldprop')
-      return value = val
-    }
-  })
-}())
+exports.oldprop = 'something'
+
+// message automatically derives from property name
+deprecate.property(exports, 'oldprop')
+
+// explicit message
+deprecate.property(exports, 'oldprop', 'oldprop >= 0.10')
 ```
 
 ## License

@@ -15,6 +15,38 @@ exports.oldfnauto = deprecate.function(fn)
 
 exports.oldfnautoanon = deprecate.function(function () {})
 
+exports.propa = 'thingie'
+exports.propauto = 'thingie'
+
+Object.defineProperty(exports, 'propget', {
+  configurable: true,
+  value: 'thingie',
+  writable: false
+})
+
+Object.defineProperty(exports, 'propdyn', {
+  configurable: true,
+  get: function () { return 'thingie' },
+  set: function () {}
+})
+
+Object.defineProperty(exports, 'propgetter', {
+  configurable: true,
+  get: function () { return 'thingie' }
+})
+
+Object.defineProperty(exports, 'propsetter', {
+  configurable: true,
+  set: function () {}
+})
+
+deprecate.property(exports, 'propa', 'propa gone')
+deprecate.property(exports, 'propauto')
+deprecate.property(exports, 'propdyn')
+deprecate.property(exports, 'propget')
+deprecate.property(exports, 'propgetter')
+deprecate.property(exports, 'propsetter')
+
 exports.automsg = function () {
   deprecate()
 }

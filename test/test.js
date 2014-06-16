@@ -265,6 +265,115 @@ describe('deprecate.function(fn, message)', function () {
   })
 })
 
+describe('deprecate.property(obj, prop, message)', function () {
+  it('should throw when given primitive', function () {
+    var deprecate = depd('test')
+    deprecate.property.bind(deprecate, 2).should.throw(/obj.*object/)
+  })
+
+  it('should throw when given missing property', function () {
+    var deprecate = depd('test')
+    var obj = {}
+    deprecate.property.bind(deprecate, obj, 'blargh').should.throw(/property.*owner/)
+  })
+
+  it('should throw when given non-configurable property', function () {
+    var deprecate = depd('test')
+    var obj = {}
+    Object.defineProperty(obj, 'thing', {value: 'thingie'})
+    deprecate.property.bind(deprecate, obj, 'thing').should.throw(/property.*configurable/)
+  })
+
+  it('should log on access to property', function () {
+    function callprop() { mylib.propa }
+    var stderr = captureStderr(callprop)
+    stderr.should.containEql(' deprecated ')
+    stderr.should.containEql(' propa gone ')
+  })
+
+  it('should log on setting property', function () {
+    var val
+    function callprop() { val = mylib.propa }
+    function setprop() { mylib.propa = 'newval' }
+    var stderr = captureStderr(setprop)
+    stderr.should.containEql(' deprecated ')
+    stderr.should.containEql(' propa gone ')
+    captureStderr(callprop).should.containEql(' deprecated ')
+    val.should.equal('newval')
+  })
+
+  it('should only warn once per call site', function () {
+    function callold() {
+      for (var i = 0; i < 5; i++) {
+        mylib.propa // single call site
+        process.stderr.write('access ' + i + '\n')
+      }
+    }
+
+    var stderr = captureStderr(callold)
+    stderr.split('deprecated').should.have.length(2)
+    stderr.split('access').should.have.length(6)
+  })
+
+  it('should warn for different accesses on same line', function () {
+    function callold() {
+      mylib.propa, mylib.propa
+    }
+
+    var stderr = captureStderr(callold)
+    var fileline = stderr.match(/\.js:[0-9]+:/)
+    stderr.should.containEql(basename(__filename))
+    stderr.split('deprecated').should.have.length(3)
+    stderr.split(fileline[0]).should.have.length(3)
+  })
+
+  describe('when value descriptor', function () {
+    it('should log on access and set', function () {
+      function callold() { mylib.propa }
+      function setold() { mylib.propa = 'val' }
+      captureStderr(callold).should.containEql(' deprecated ')
+      captureStderr(setold).should.containEql(' deprecated ')
+    })
+
+    it('should not log on set to non-writable', function () {
+      function callold() { mylib.propget }
+      function setold() { mylib.propget = 'val' }
+      captureStderr(callold).should.containEql(' deprecated ')
+      captureStderr(setold).should.be.empty
+    })
+  })
+
+  describe('when accessor descriptor', function () {
+    it('should log on access and set', function () {
+      function callold() { mylib.propdyn }
+      function setold() { mylib.propdyn = 'val' }
+      captureStderr(callold).should.containEql(' deprecated ')
+      captureStderr(setold).should.containEql(' deprecated ')
+    })
+
+    it('should not log on access when no accessor', function () {
+      function callold() { mylib.propsetter }
+      captureStderr(callold).should.be.empty
+    })
+
+    it('should not log on set when no setter', function () {
+      function callold() { mylib.propgetter = 'val' }
+      captureStderr(callold).should.be.empty
+    })
+  })
+
+  describe('when message omitted', function () {
+    it('should generate message for method call on named function', function () {
+      function callold() { mylib.propauto }
+      var stderr = captureStderr(callold)
+      stderr.should.containEql(basename(__filename))
+      stderr.should.containEql('deprecated')
+      stderr.should.containEql(' Object.propauto ')
+      stderr.should.match(/ at [^:]+test\.js:/)
+    })
+  })
+})
+
 describe('process.on(\'deprecation\', fn)', function () {
   var error
   var stderr
