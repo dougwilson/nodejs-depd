@@ -198,6 +198,11 @@ describe('deprecate(message)', function () {
 })
 
 describe('deprecate.function(fn, message)', function () {
+  it('should thrown when not given function', function () {
+    var deprecate = depd('test')
+    deprecate.function.bind(deprecate, 2).should.throw(/fn.*function/)
+  })
+
   it('should log on call to function', function () {
     function callold() { mylib.oldfn() }
     captureStderr(callold).should.containEql(' oldfn ')

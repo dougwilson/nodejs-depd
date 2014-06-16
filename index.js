@@ -275,6 +275,10 @@ function prepareObjectStackTrace(obj, stack) {
  */
 
 function wrapfunction(fn, message) {
+  if (typeof fn !== 'function') {
+    throw new TypeError('argument fn must be a function')
+  }
+
   var args = createArgumentsString(fn.length)
   var deprecate = this
   var stack = getStack()
