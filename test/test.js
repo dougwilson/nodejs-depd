@@ -302,6 +302,10 @@ describe('process.on(\'deprecation\', fn)', function () {
     Object.prototype.toString.call(error).should.equal('[object Error]')
   })
 
+  it('should be instanceof Error', function () {
+    error.should.be.instanceof(Error)
+  })
+
   it('should emit error with proper stack', function () {
     var stack = error.stack.split('\n')
     stack[0].should.equal('DeprecationError: my-lib deprecated old')
