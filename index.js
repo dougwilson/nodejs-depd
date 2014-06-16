@@ -10,7 +10,6 @@
 
 var EventEmitter = require('events').EventEmitter
 var relative = require('path').relative
-var supportsColor = require('supports-color')
 
 /**
  * Module exports.
@@ -175,7 +174,7 @@ function log(message, site) {
   }
 
   // format and write message
-  var format = supportsColor && process.stderr.isTTY
+  var format = process.stderr.isTTY
     ? formatColor
     : formatPlain
   var msg = format.call(this, message, caller)

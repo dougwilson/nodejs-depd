@@ -9,9 +9,6 @@
     "deprecated"
   ],
   "repository": "dougwilson/nodejs-depd",
-  "dependencies": {
-    "supports-color": "0.2.0"
-  },
   "devDependencies": {
     "istanbul": "0.2.10",
     "mocha": "~1.20.1",

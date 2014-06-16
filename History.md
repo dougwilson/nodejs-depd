@@ -2,6 +2,7 @@ unreleased
 ==========
 
   * Add `deprecate.property(obj, prop, message)`
+  * Remove `supports-color` dependency for node.js 0.8
 
 0.1.0 / 2014-06-15
 ==================
