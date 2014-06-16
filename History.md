@@ -1,5 +1,5 @@
-unreleased
-==========
+0.2.0 / 2014-06-15
+==================
 
   * Add `deprecate.property(obj, prop, message)`
   * Remove `supports-color` dependency for node.js 0.8
