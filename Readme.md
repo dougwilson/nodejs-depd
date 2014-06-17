@@ -119,6 +119,8 @@ event listeners, just the output to STDERR.
 
 ## Display
 
+![message](files/message.png)
+
 When a user calls a function in your library that you mark deprecated, they
 will see the following written to STDERR (in the given colors, similar colors
 and layout to the `debug` module):
