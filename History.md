@@ -1,3 +1,8 @@
+unreleased
+==========
+
+  * Add `NO_DEPRECATION` environment variable
+
 0.2.0 / 2014-06-15
 ==================
 

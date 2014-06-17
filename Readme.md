@@ -100,6 +100,23 @@ DeprecationError: my-cool-module deprecated oldfunction
     at node.js:902:3
 ```
 
+### process.env.NO_DEPRECATION
+
+As a user of modules that are deprecated, the environment variable `NO_DEPRECATION`
+is provided as a quick solution to silencing deprecation warnings from being
+output. The format of this is similar to that of `DEBUG`:
+
+```sh
+$ NO_DEPRECATION=my-module,othermod node app.js
+```
+
+This will suppress deprecations from being output for "my-module" and "othermod".
+The value is a list of comma-separated namespaces. To suppress every warning
+across all namespaces, use the value `*` for a namespace.
+
+**NOTE** This will not suppress the deperecations given to any "deprecation"
+event listeners, just the output to STDERR.
+
 ## Display
 
 When a user calls a function in your library that you mark deprecated, they

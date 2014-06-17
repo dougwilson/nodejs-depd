@@ -436,6 +436,44 @@ describe('process.on(\'deprecation\', fn)', function () {
   })
 })
 
+describe('process.env.NO_DEPRECATION', function () {
+  var error
+  function ondeprecation(err) { error = err }
+
+  after(function () {
+    process.env.NO_DEPRECATION = ''
+  })
+
+  it('should suppress given namespace', function () {
+    process.env.NO_DEPRECATION = 'old-lib'
+    var oldlib = require('./fixtures/old-lib')
+    captureStderr(oldlib.old).should.be.empty
+    captureStderr(oldlib.old2).should.not.be.empty
+  })
+
+  it('should suppress multiple namespaces', function () {
+    process.env.NO_DEPRECATION = 'cool-lib,neat-lib'
+    var coollib = require('./fixtures/cool-lib')
+    captureStderr(coollib.cool).should.be.empty
+    captureStderr(coollib.neat).should.be.empty
+  })
+
+  it('should be case-insensitive', function () {
+    process.env.NO_DEPRECATION = 'NEW-LIB'
+    var newlib = require('./fixtures/new-lib')
+    captureStderr(newlib.old).should.be.empty
+  })
+
+  describe('when *', function () {
+    it('should suppress any namespace', function () {
+      process.env.NO_DEPRECATION = '*'
+      var multilib = require('./fixtures/multi-lib')
+      captureStderr(multilib.old).should.be.empty
+      captureStderr(multilib.old2).should.be.empty
+    })
+  })
+})
+
 function captureStderr(fn, color) {
   var chunks = []
   var isTTY = process.stderr.isTTY

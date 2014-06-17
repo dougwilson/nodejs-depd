@@ -104,6 +104,7 @@ function depd(namespace) {
   }
 
   deprecate._file = file
+  deprecate._ignored = isignored(namespace)
   deprecate._namespace = namespace
   deprecate._warned = Object.create(null)
 
@@ -114,10 +115,39 @@ function depd(namespace) {
 }
 
 /**
+ * Determine if namespace is ignored.
+ */
+
+function isignored(namespace) {
+  var str = process.env.NO_DEPRECATION || ''
+  var val = str.split(/[ ,]+/)
+
+  namespace = String(namespace).toLowerCase()
+
+  for (var i = 0 ; i < val.length; i++) {
+    if (!(str = val[i])) continue;
+
+    // namespace ignored
+    if (str === '*' || str.toLowerCase() === namespace) {
+      return true
+    }
+  }
+
+  return false
+}
+
+/**
  * Display deprecation message.
  */
 
 function log(message, site) {
+  var haslisteners = eventListenerCount(process, 'deprecation') !== 0
+
+  // abort early if no destination
+  if (!haslisteners && this._ignored) {
+    return
+  }
+
   var caller
   var callSite
   var i = 0
@@ -167,7 +197,7 @@ function log(message, site) {
   }
 
   // emit deprecation if listeners exist
-  if (eventListenerCount(process, 'deprecation') !== 0) {
+  if (haslisteners) {
     var err = DeprecationError(this._namespace, message, stack.slice(i))
     process.emit('deprecation', err)
     return
