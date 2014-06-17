@@ -440,6 +440,14 @@ describe('process.env.NO_DEPRECATION', function () {
   var error
   function ondeprecation(err) { error = err }
 
+  beforeEach(function () {
+    error = null
+  })
+
+  afterEach(function () {
+    process.removeListener('deprecation', ondeprecation)
+  })
+
   after(function () {
     process.env.NO_DEPRECATION = ''
   })
@@ -462,6 +470,14 @@ describe('process.env.NO_DEPRECATION', function () {
     process.env.NO_DEPRECATION = 'NEW-LIB'
     var newlib = require('./fixtures/new-lib')
     captureStderr(newlib.old).should.be.empty
+  })
+
+  it('should emit "deprecation" events anyway', function () {
+    process.env.NO_DEPRECATION = 'thing-lib'
+    var thinglib = require('./fixtures/thing-lib')
+    process.on('deprecation', ondeprecation)
+    captureStderr(thinglib.old).should.be.empty
+    error.namespace.should.equal('thing-lib')
   })
 
   describe('when *', function () {
