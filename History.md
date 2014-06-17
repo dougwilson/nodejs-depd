@@ -1,5 +1,5 @@
-unreleased
-==========
+0.3.0 / 2014-06-16
+==================
 
   * Add `NO_DEPRECATION` environment variable
 
