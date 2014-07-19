@@ -1,6 +1,7 @@
 unreleased
 ==========
 
+  * Support `--no-deprecation` argument
   * Support `deprecate.property(fn, prop, message)`
 
 0.3.0 / 2014-06-16

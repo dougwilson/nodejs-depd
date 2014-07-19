@@ -2,7 +2,10 @@
 var basename = require('path').basename
 var depd = require('..')
 var mylib = require('./fixtures/my-lib')
+var path = require('path')
+var script = path.join(__dirname, 'fixtures', 'script.js')
 var should = require('should')
+var spawn = require('child_process').spawn
 
 describe('depd(namespace)', function () {
   it('creates deprecated function', function () {
@@ -496,6 +499,48 @@ describe('process.env.NO_DEPRECATION', function () {
     })
   })
 })
+
+describe('node script.js', function () {
+  it('should display deprecation message', function (done) {
+    captureChildStderr([script], function (err, stderr) {
+      if (err) return done(err)
+      var filename = path.relative(process.cwd(), script)
+      stderr = stderr.replace(/\w+, \d+ \w+ \d+ \d+:\d+:\d+ \w+/, '__timestamp__')
+      stderr.should.equal('__timestamp__ old-lib deprecated old at ' + filename + ':7:10\n')
+      done()
+    })
+  })
+})
+
+describe('node --no-deprecation script.js', function () {
+  it('should suppress deprecation message', function (done) {
+    captureChildStderr(['--no-deprecation', script], function (err, stderr) {
+      if (err) return done(err)
+      stderr.should.be.empty
+      done()
+    })
+  })
+})
+
+function captureChildStderr(args, callback) {
+  var chunks = []
+  var env = {PATH: process.env.PATH}
+  var exec = process.argv[0]
+  var proc = spawn(exec, args, {
+    env: env
+  })
+
+  proc.stdout.resume()
+  proc.stderr.on('data', function ondata(chunk) {
+    chunks.push(chunk)
+  })
+
+  proc.on('error', callback)
+  proc.on('exit', function () {
+    var stderr = Buffer.concat(chunks).toString('utf8')
+    callback(null, stderr)
+  })
+}
 
 function captureStderr(fn, color) {
   var chunks = []

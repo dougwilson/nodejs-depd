@@ -119,6 +119,12 @@ function depd(namespace) {
  */
 
 function isignored(namespace) {
+  /* istanbul ignore next: tested in a child processs */
+  if (process.noDeprecation) {
+    // --no-deprecation support
+    return true
+  }
+
   var str = process.env.NO_DEPRECATION || ''
   var val = str.split(/[ ,]+/)
 
