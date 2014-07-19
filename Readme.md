@@ -120,6 +120,26 @@ all deprecations.
 **NOTE** This will not suppress the deperecations given to any "deprecation"
 event listeners, just the output to STDERR.
 
+### process.env.TRACE_DEPRECATION
+
+As a user of modules that are deprecated, the environment variable `TRACE_DEPRECATION`
+is provided as a solution to getting more detailed location information in deprecation
+warnings by including the entire stack trace. The format of this is the same as
+`NO_DEPRECATION`:
+
+```sh
+$ TRACE_DEPRECATION=my-module,othermod node app.js
+```
+
+This will include stack traces for deprecations being output for "my-module" and
+"othermod". The value is a list of comma-separated namespaces. To trace every
+warning across all namespaces, use the value `*` for a namespace.
+
+Providing the argument `--trace-deprecation` to the `node` executable will trace
+all deprecations.
+
+**NOTE** This will not trace the deperecations silenced by `NO_DEPRECATION`.
+
 ## Display
 
 ![message](files/message.png)

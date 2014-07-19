@@ -1,7 +1,9 @@
 unreleased
 ==========
 
+  * Add `TRACE_DEPRECATION` environment variable
   * Support `--no-deprecation` argument
+  * Support `--trace-deprecation` argument
   * Support `deprecate.property(fn, prop, message)`
 
 0.3.0 / 2014-06-16

@@ -500,6 +500,51 @@ describe('process.env.NO_DEPRECATION', function () {
   })
 })
 
+describe('process.env.TRACE_DEPRECATION', function () {
+  before(function () {
+    process.env.TRACE_DEPRECATION = 'trace-lib'
+  })
+
+  after(function () {
+    process.env.TRACE_DEPRECATION = ''
+  })
+
+  it('should trace given namespace', function () {
+    var tracelib = require('./fixtures/trace-lib')
+    function callold() { tracelib.old() }
+    captureStderr(callold).should.containEql(' trace-lib deprecated old\n    at callold (')
+  })
+
+  it('should not trace non-given namespace', function () {
+    var tracelib = require('./fixtures/trace-lib')
+    function callold() { tracelib.old2() }
+    captureStderr(callold).should.containEql(' trace-lib-other deprecated old2 at ')
+  })
+
+  describe('when output supports colors', function () {
+    var stderr
+    before(function () {
+      var tracelib = require('./fixtures/trace-lib')
+      function callold() { tracelib.old() }
+      stderr = captureStderr(callold, true)
+    })
+
+    it('should log in color', function () {
+      stderr.should.not.be.empty
+      stderr.should.containEql('\x1b[')
+    })
+
+    it('should log namespace', function () {
+      stderr.should.containEql('trace-lib')
+    })
+
+    it('should log call site in color', function () {
+      stderr.should.containEql(basename(__filename))
+      stderr.should.match(/\x1b\[\d+mat callold \(/)
+    })
+  })
+})
+
 describe('node script.js', function () {
   it('should display deprecation message', function (done) {
     captureChildStderr([script], function (err, stderr) {
@@ -517,6 +562,17 @@ describe('node --no-deprecation script.js', function () {
     captureChildStderr(['--no-deprecation', script], function (err, stderr) {
       if (err) return done(err)
       stderr.should.be.empty
+      done()
+    })
+  })
+})
+
+describe('node --trace-deprecation script.js', function () {
+  it('should suppress deprecation message', function (done) {
+    captureChildStderr(['--trace-deprecation', script], function (err, stderr) {
+      if (err) return done(err)
+      stderr = stderr.replace(/\w+, \d+ \w+ \d+ \d+:\d+:\d+ \w+/, '__timestamp__')
+      stderr.should.startWith('__timestamp__ old-lib deprecated old\n    at run (' + script + ':7:10)\n    at')
       done()
     })
   })

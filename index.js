@@ -32,6 +32,27 @@ var eventListenerCount = EventEmitter.listenerCount
   || function (emitter, type) { return emitter.listeners(type).length }
 
 /**
+ * Determine if namespace is contained in the string.
+ */
+
+function containsNamespace(str, namespace) {
+  var val = str.split(/[ ,]+/)
+
+  namespace = String(namespace).toLowerCase()
+
+  for (var i = 0 ; i < val.length; i++) {
+    if (!(str = val[i])) continue;
+
+    // namespace contained
+    if (str === '*' || str.toLowerCase() === namespace) {
+      return true
+    }
+  }
+
+  return false
+}
+
+/**
  * Convert a data descriptor to accessor descriptor.
  */
 
@@ -106,6 +127,7 @@ function depd(namespace) {
   deprecate._file = file
   deprecate._ignored = isignored(namespace)
   deprecate._namespace = namespace
+  deprecate._traced = istraced(namespace)
   deprecate._warned = Object.create(null)
 
   deprecate.function = wrapfunction
@@ -126,20 +148,26 @@ function isignored(namespace) {
   }
 
   var str = process.env.NO_DEPRECATION || ''
-  var val = str.split(/[ ,]+/)
 
-  namespace = String(namespace).toLowerCase()
+  // namespace ignored
+  return containsNamespace(str, namespace)
+}
 
-  for (var i = 0 ; i < val.length; i++) {
-    if (!(str = val[i])) continue;
+/**
+ * Determine if namespace is traced.
+ */
 
-    // namespace ignored
-    if (str === '*' || str.toLowerCase() === namespace) {
-      return true
-    }
+function istraced(namespace) {
+  /* istanbul ignore next: tested in a child processs */
+  if (process.traceDeprecation) {
+    // --trace-deprecation support
+    return true
   }
 
-  return false
+  var str = process.env.TRACE_DEPRECATION || ''
+
+  // namespace traced
+  return containsNamespace(str, namespace)
 }
 
 /**
@@ -213,7 +241,7 @@ function log(message, site) {
   var format = process.stderr.isTTY
     ? formatColor
     : formatPlain
-  var msg = format.call(this, message, caller)
+  var msg = format.call(this, message, caller, stack.slice(i))
   process.stderr.write(msg + '\n', 'utf8')
 
   return
@@ -262,12 +290,21 @@ function defaultMessage(site) {
  * Format deprecation message without color.
  */
 
-function formatPlain(msg, caller) {
+function formatPlain(msg, caller, stack) {
   var timestamp = new Date().toUTCString()
 
   var formatted = timestamp
     + ' ' + this._namespace
     + ' deprecated ' + msg
+
+  // add stack trace
+  if (this._traced) {
+    for (var i = 0; i < stack.length; i++) {
+      formatted += '\n    at ' + stack[i].toString()
+    }
+
+    return formatted
+  }
 
   if (caller) {
     formatted += ' at ' + formatLocation(caller)
@@ -280,10 +317,19 @@ function formatPlain(msg, caller) {
  * Format deprecation message with color.
  */
 
-function formatColor(msg, caller) {
+function formatColor(msg, caller, stack) {
   var formatted = '\x1b[36;1m' + this._namespace + '\x1b[22;39m' // bold cyan
     + ' \x1b[33;1mdeprecated\x1b[22;39m' // bold yellow
     + ' \x1b[90m' + msg + '\x1b[39m' // grey
+
+  // add stack trace
+  if (this._traced) {
+    for (var i = 0; i < stack.length; i++) {
+      formatted += '\n    \x1b[36mat ' + stack[i].toString() + '\x1b[39m' // cyan
+    }
+
+    return formatted
+  }
 
   if (caller) {
     formatted += ' \x1b[36m' + formatLocation(caller) + '\x1b[39m' // cyan
