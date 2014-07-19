@@ -327,6 +327,13 @@ describe('deprecate.property(obj, prop, message)', function () {
     stderr.split(fileline[0]).should.have.length(3)
   })
 
+  it('should log on access to property on function', function () {
+    function callprop() { mylib.fnprop.propa }
+    var stderr = captureStderr(callprop)
+    stderr.should.containEql(' deprecated ')
+    stderr.should.containEql(' fn propa gone ')
+  })
+
   describe('when value descriptor', function () {
     it('should log on access and set', function () {
       function callold() { mylib.propa }

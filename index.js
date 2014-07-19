@@ -351,7 +351,7 @@ function wrapfunction(fn, message) {
  */
 
 function wrapproperty(obj, prop, message) {
-  if (!obj || typeof obj !== 'object') {
+  if (!obj || (typeof obj !== 'object' && typeof obj !== 'function')) {
     throw new TypeError('argument obj must be object')
   }
 
