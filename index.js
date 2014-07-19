@@ -320,7 +320,7 @@ function formatPlain(msg, caller, stack) {
 function formatColor(msg, caller, stack) {
   var formatted = '\x1b[36;1m' + this._namespace + '\x1b[22;39m' // bold cyan
     + ' \x1b[33;1mdeprecated\x1b[22;39m' // bold yellow
-    + ' \x1b[90m' + msg + '\x1b[39m' // grey
+    + ' \x1b[0m' + msg + '\x1b[39m' // reset
 
   // add stack trace
   if (this._traced) {

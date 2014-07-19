@@ -150,7 +150,7 @@ and layout to the `debug` module):
 
 ```
 bright cyan    bright yellow
-|              |          grey        cyan
+|              |          reset       cyan
 |              |          |           |
 ▼              ▼          ▼           ▼
 my-cool-module deprecated oldfunction [eval]-wrapper:6:22

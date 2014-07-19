@@ -551,7 +551,7 @@ describe('node script.js', function () {
       if (err) return done(err)
       var filename = path.relative(process.cwd(), script)
       stderr = stderr.replace(/\w+, \d+ \w+ \d+ \d+:\d+:\d+ \w+/, '__timestamp__')
-      stderr.should.equal('__timestamp__ old-lib deprecated old at ' + filename + ':7:10\n')
+      stderr.should.equal('__timestamp__ my-cool-module deprecated oldfunction at ' + filename + ':7:10\n')
       done()
     })
   })
@@ -572,7 +572,7 @@ describe('node --trace-deprecation script.js', function () {
     captureChildStderr(['--trace-deprecation', script], function (err, stderr) {
       if (err) return done(err)
       stderr = stderr.replace(/\w+, \d+ \w+ \d+ \d+:\d+:\d+ \w+/, '__timestamp__')
-      stderr.should.startWith('__timestamp__ old-lib deprecated old\n    at run (' + script + ':7:10)\n    at')
+      stderr.should.startWith('__timestamp__ my-cool-module deprecated oldfunction\n    at run (' + script + ':7:10)\n    at')
       done()
     })
   })

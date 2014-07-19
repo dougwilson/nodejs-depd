@@ -2,6 +2,7 @@ unreleased
 ==========
 
   * Add `TRACE_DEPRECATION` environment variable
+  * Remove non-standard grey color from color output
   * Support `--no-deprecation` argument
   * Support `--trace-deprecation` argument
   * Support `deprecate.property(fn, prop, message)`
