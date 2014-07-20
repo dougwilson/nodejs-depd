@@ -1,5 +1,5 @@
-unreleased
-==========
+0.4.1 / 2014-07-19
+==================
 
   * Improve automatic message generation for function properties
 
