@@ -59,10 +59,12 @@ exports.automsganon = function () {
   (function () { deprecate() }())
 }
 
-exports.fnprop = function () {}
+exports.fnprop = function thefn() {}
 exports.fnprop.propa = 'thingie'
+exports.fnprop.propautomsg = 'thingie'
 
 deprecate.property(exports.fnprop, 'propa', 'fn propa gone')
+deprecate.property(exports.fnprop, 'propautomsg')
 
 function fn(a1, a2) {
   return a2

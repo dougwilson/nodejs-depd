@@ -1,3 +1,8 @@
+unreleased
+==========
+
+  * Improve automatic message generation for function properties
+
 0.4.0 / 2014-07-19
 ==================
 
