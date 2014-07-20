@@ -1,5 +1,5 @@
-unreleased
-==========
+0.4.0 / 2014-07-19
+==================
 
   * Add `TRACE_DEPRECATION` environment variable
   * Remove non-standard grey color from color output
