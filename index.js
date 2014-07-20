@@ -183,6 +183,7 @@ function log(message, site) {
   }
 
   var caller
+  var callFile
   var callSite
   var i = 0
   var seen = false
@@ -204,9 +205,12 @@ function log(message, site) {
   // get caller of deprecated thing in relation to file
   for (; i < stack.length; i++) {
     caller = callSiteLocation(stack[i])
+    callFile = caller[0]
 
-    if (caller[0] === file) {
+    if (callFile === file) {
       seen = true
+    } else if (callFile === this._file) {
+      file = this._file
     } else if (seen) {
       break
     }

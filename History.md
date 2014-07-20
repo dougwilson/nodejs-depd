@@ -1,3 +1,8 @@
+unreleased
+==========
+
+  * Correct call site for wrapped functions and properties
+
 0.4.1 / 2014-07-19
 ==================
 

@@ -222,6 +222,13 @@ describe('deprecate.function(fn, message)', function () {
     ret.should.equal(2)
   })
 
+  it('should show call site outside scope', function () {
+    function callold() { mylib.layerfn() }
+    var stderr = captureStderr(callold)
+    stderr.should.containEql(' oldfn ')
+    stderr.should.match(/test.js:[0-9]+:[0-9]+/)
+  })
+
   it('should only warn once per call site', function () {
     function callold() {
       for (var i = 0; i < 5; i++) {
@@ -328,6 +335,13 @@ describe('deprecate.property(obj, prop, message)', function () {
     stderr.should.containEql(basename(__filename))
     stderr.split('deprecated').should.have.length(3)
     stderr.split(fileline[0]).should.have.length(3)
+  })
+
+  it('should show call site outside scope', function () {
+    function callold() { mylib.layerprop() }
+    var stderr = captureStderr(callold)
+    stderr.should.containEql(' propa ')
+    stderr.should.match(/test.js:[0-9]+:[0-9]+/)
   })
 
   describe('when obj is a function', function () {

@@ -66,6 +66,14 @@ exports.fnprop.propautomsg = 'thingie'
 deprecate.property(exports.fnprop, 'propa', 'fn propa gone')
 deprecate.property(exports.fnprop, 'propautomsg')
 
+exports.layerfn = function () {
+  exports.oldfn()
+}
+
+exports.layerprop = function () {
+  exports.propa
+}
+
 function fn(a1, a2) {
   return a2
 }
