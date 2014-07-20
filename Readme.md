@@ -17,8 +17,7 @@ $ npm install depd
 ## API
 
 ```js
-var depd      = require('depd')
-var deprecate = depd('my-module')
+var deprecate = require('depd')('my-module')
 ```
 
 This library allows you to display deprecation messages to your users.
