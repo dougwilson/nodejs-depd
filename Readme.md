@@ -3,6 +3,7 @@
 [![NPM version](https://badge.fury.io/js/depd.svg)](http://badge.fury.io/js/depd)
 [![Build Status](https://travis-ci.org/dougwilson/nodejs-depd.svg?branch=master)](https://travis-ci.org/dougwilson/nodejs-depd)
 [![Coverage Status](https://img.shields.io/coveralls/dougwilson/nodejs-depd.svg?branch=master)](https://coveralls.io/r/dougwilson/nodejs-depd)
+[![Gittip](http://img.shields.io/gittip/dougwilson.svg)](https://www.gittip.com/dougwilson/)
 
 Deprecate all the things
 
