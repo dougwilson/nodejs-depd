@@ -40,6 +40,19 @@ describe('deprecate(message)', function () {
     stderr.should.match(/\.js:[0-9]+:[0-9]+/)
   })
 
+  it('should log call site regardless of Error.stackTraceLimit', function () {
+    function callold() { mylib.old() }
+    var limit = Error.stackTraceLimit
+    try {
+      Error.stackTraceLimit = 1
+      var stderr = captureStderr(callold)
+      stderr.should.containEql(basename(__filename))
+      stderr.should.match(/\.js:[0-9]+:[0-9]+/)
+    } finally {
+      Error.stackTraceLimit = limit
+    }
+  })
+
   it('should log call site within eval', function () {
     function callold() { eval('mylib.old()') }
     var stderr = captureStderr(callold)

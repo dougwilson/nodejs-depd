@@ -363,15 +363,18 @@ function formatLocation(callSite) {
  */
 
 function getStack() {
+  var limit = Error.stackTraceLimit
   var obj = {}
   var prep = Error.prepareStackTrace
 
   Error.prepareStackTrace = prepareObjectStackTrace
+  Error.stackTraceLimit = Math.max(10, limit)
   Error.captureStackTrace(obj, getStack)
 
   var stack = obj.stack
 
   Error.prepareStackTrace = prep
+  Error.stackTraceLimit = limit
 
   return stack
 }
