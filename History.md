@@ -1,5 +1,5 @@
-unreleased
-==========
+0.4.3 / 2014-07-26
+==================
 
   * Fix exception when global `Error.stackTraceLimit` is too low
 
