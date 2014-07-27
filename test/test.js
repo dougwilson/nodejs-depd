@@ -255,6 +255,17 @@ describe('deprecate.function(fn, message)', function () {
     stderr.split('invoke').should.have.length(6)
   })
 
+  it('should handle rapid calling of deprecated thing', function () {
+    function callold() {
+      for (var i = 0; i < 10000; i++) {
+        mylib.oldfn()
+      }
+    }
+
+    var stderr = captureStderr(callold)
+    stderr.split('deprecated').should.have.length(2)
+  })
+
   it('should warn for different calls on same line', function () {
     function callold() {
       mylib.oldfn(), mylib.oldfn()

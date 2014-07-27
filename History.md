@@ -1,3 +1,8 @@
+unreleased
+==========
+
+  * Work-around v8 generating empty stack traces
+
 0.4.3 / 2014-07-26
 ==================
 

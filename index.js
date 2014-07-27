@@ -369,9 +369,12 @@ function getStack() {
 
   Error.prepareStackTrace = prepareObjectStackTrace
   Error.stackTraceLimit = Math.max(10, limit)
-  Error.captureStackTrace(obj, getStack)
 
-  var stack = obj.stack
+  // capture the stack
+  Error.captureStackTrace(obj)
+
+  // slice this function off the top
+  var stack = obj.stack.slice(1)
 
   Error.prepareStackTrace = prep
   Error.stackTraceLimit = limit
