@@ -1,9 +1,11 @@
 # depd
 
-[![NPM version](https://badge.fury.io/js/depd.svg)](http://badge.fury.io/js/depd)
-[![Build Status](https://travis-ci.org/dougwilson/nodejs-depd.svg?branch=master)](https://travis-ci.org/dougwilson/nodejs-depd)
-[![Coverage Status](https://img.shields.io/coveralls/dougwilson/nodejs-depd.svg?branch=master)](https://coveralls.io/r/dougwilson/nodejs-depd)
-[![Gittip](http://img.shields.io/gittip/dougwilson.svg)](https://www.gittip.com/dougwilson/)
+[![NPM Version][npm-version-image]][npm-url]
+[![NPM Downloads][npm-downloads-image]][npm-url]
+[![Node.js Version][node-image]][node-url]
+[![Build Status][travis-image]][travis-url]
+[![Coverage Status][coveralls-image]][coveralls-url]
+[![Gittip][gittip-image]][gittip-url]
 
 Deprecate all the things
 
@@ -270,3 +272,15 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
+
+[npm-version-image]: https://img.shields.io/npm/v/depd.svg?style=flat
+[npm-downloads-image]: https://img.shields.io/npm/dm/depd.svg?style=flat
+[npm-url]: https://npmjs.org/package/depd
+[travis-image]: https://img.shields.io/travis/dougwilson/nodejs-depd.svg?style=flat
+[travis-url]: https://travis-ci.org/dougwilson/nodejs-depd
+[coveralls-image]: https://img.shields.io/coveralls/dougwilson/nodejs-depd.svg?style=flat
+[coveralls-url]: https://coveralls.io/r/dougwilson/nodejs-depd?branch=master
+[node-image]: https://img.shields.io/badge/node.js->=_0.8-brightgreen.svg?style=flat
+[node-url]: http://nodejs.org/download/
+[gittip-image]: https://img.shields.io/gittip/dougwilson.svg?style=flat
+[gittip-url]: https://www.gittip.com/dougwilson/
