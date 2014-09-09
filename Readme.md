@@ -260,7 +260,7 @@ deprecate.property(exports, 'oldprop', 'oldprop >= 0.10')
 [travis-url]: https://travis-ci.org/dougwilson/nodejs-depd
 [coveralls-image]: https://img.shields.io/coveralls/dougwilson/nodejs-depd.svg?style=flat
 [coveralls-url]: https://coveralls.io/r/dougwilson/nodejs-depd?branch=master
-[node-image]: https://img.shields.io/badge/node.js->=_0.8-brightgreen.svg?style=flat
+[node-image]: https://img.shields.io/node/v/depd.svg?style=flat
 [node-url]: http://nodejs.org/download/
 [gittip-image]: https://img.shields.io/gittip/dougwilson.svg?style=flat
 [gittip-url]: https://www.gittip.com/dougwilson/
