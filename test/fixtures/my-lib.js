@@ -2,6 +2,7 @@
 var deprecate = require('../..')('my-lib')
 
 exports.fn = fn
+exports.prop = 'thingie'
 
 exports.old = function () {
   deprecate('old')
