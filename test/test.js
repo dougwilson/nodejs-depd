@@ -1,5 +1,6 @@
 
 var basename = require('path').basename
+var bufferConcat = require('../lib/compat').bufferConcat
 var depd = require('..')
 var mylib = require('./fixtures/my-lib')
 var path = require('path')
@@ -604,26 +605,34 @@ describe('node script.js', function () {
   })
 })
 
-describe('node --no-deprecation script.js', function () {
-  it('should suppress deprecation message', function (done) {
-    captureChildStderr(['--no-deprecation', script], function (err, stderr) {
-      if (err) return done(err)
-      stderr.should.be.empty
-      done()
-    })
-  })
-})
+;(function () {
+  // --*-deprecation switches are 0.8+
+  // no good way to feature detect this sync
+  var describe = /^v0\.6\./.test(process.version)
+    ? global.describe.skip
+    : global.describe
 
-describe('node --trace-deprecation script.js', function () {
-  it('should suppress deprecation message', function (done) {
-    captureChildStderr(['--trace-deprecation', script], function (err, stderr) {
-      if (err) return done(err)
-      stderr = stderr.replace(/\w+, \d+ \w+ \d+ \d+:\d+:\d+ \w+/, '__timestamp__')
-      stderr.should.startWith('__timestamp__ my-cool-module deprecated oldfunction\n    at run (' + script + ':7:10)\n    at')
-      done()
+  describe('node --no-deprecation script.js', function () {
+    it('should suppress deprecation message', function (done) {
+      captureChildStderr(['--no-deprecation', script], function (err, stderr) {
+        if (err) return done(err)
+        stderr.should.be.empty
+        done()
+      })
     })
   })
-})
+
+  describe('node --trace-deprecation script.js', function () {
+    it('should suppress deprecation message', function (done) {
+      captureChildStderr(['--trace-deprecation', script], function (err, stderr) {
+        if (err) return done(err)
+        stderr = stderr.replace(/\w+, \d+ \w+ \d+ \d+:\d+:\d+ \w+/, '__timestamp__')
+        stderr.should.startWith('__timestamp__ my-cool-module deprecated oldfunction\n    at run (' + script + ':7:10)\n    at')
+        done()
+      })
+    })
+  })
+}())
 
 function captureChildStderr(args, callback) {
   var chunks = []
@@ -640,7 +649,7 @@ function captureChildStderr(args, callback) {
 
   proc.on('error', callback)
   proc.on('exit', function () {
-    var stderr = Buffer.concat(chunks).toString('utf8')
+    var stderr = bufferConcat(chunks).toString('utf8')
     callback(null, stderr)
   })
 }
@@ -662,5 +671,5 @@ function captureStderr(fn, color) {
     process.stderr.write = write
   }
 
-  return Buffer.concat(chunks).toString('utf8')
+  return bufferConcat(chunks).toString('utf8')
 }

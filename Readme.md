@@ -117,7 +117,7 @@ The value is a list of comma-separated namespaces. To suppress every warning
 across all namespaces, use the value `*` for a namespace.
 
 Providing the argument `--no-deprecation` to the `node` executable will suppress
-all deprecations.
+all deprecations (only available in Node.js 0.8 or higher).
 
 **NOTE** This will not suppress the deperecations given to any "deprecation"
 event listeners, just the output to STDERR.
@@ -138,7 +138,7 @@ This will include stack traces for deprecations being output for "my-module" and
 warning across all namespaces, use the value `*` for a namespace.
 
 Providing the argument `--trace-deprecation` to the `node` executable will trace
-all deprecations.
+all deprecations (only available in Node.js 0.8 or higher).
 
 **NOTE** This will not trace the deperecations silenced by `NO_DEPRECATION`.
 
