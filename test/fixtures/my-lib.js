@@ -1,6 +1,8 @@
 
 var deprecate = require('../..')('my-lib')
 
+exports.fn = fn
+
 exports.old = function () {
   deprecate('old')
 }
