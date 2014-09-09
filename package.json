@@ -16,6 +16,13 @@
     "mocha": "~1.21.4",
     "should": "~4.0.4"
   },
+  "files": [
+    "lib/",
+    "History.md",
+    "LICENSE",
+    "index.js",
+    "Readme.md"
+  ],
   "engines": {
     "node": ">= 0.6"
   },
