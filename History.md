@@ -1,6 +1,7 @@
 unreleased
 ==========
 
+  * Improve call speed to functions using the function wrapper
   * Support Node.js 0.6
 
 0.4.4 / 2014-07-27

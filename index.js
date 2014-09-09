@@ -408,6 +408,7 @@ function wrapfunction(fn, message) {
   site.name = fn.name
 
   var deprecatedfn = eval('(function (' + args + ') {\n'
+    + '"use strict"\n'
     + 'log.call(deprecate, message, site)\n'
     + 'return fn.apply(this, arguments)\n'
     + '})')
