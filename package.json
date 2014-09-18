@@ -1,7 +1,7 @@
 {
   "name": "depd",
   "description": "Deprecate all the things",
-  "version": "0.4.5",
+  "version": "1.0.0",
   "author": "Douglas Christopher Wilson <doug@somethingdoug.com>",
   "license": "MIT",
   "keywords": [
