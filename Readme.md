@@ -5,7 +5,7 @@
 [![Node.js Version][node-image]][node-url]
 [![Build Status][travis-image]][travis-url]
 [![Coverage Status][coveralls-image]][coveralls-url]
-[![Gittip][gittip-image]][gittip-url]
+[![Gratipay][gratipay-image]][gratipay-url]
 
 Deprecate all the things
 
@@ -267,5 +267,5 @@ deprecate.property(exports, 'oldprop', 'oldprop >= 0.10')
 [coveralls-url]: https://coveralls.io/r/dougwilson/nodejs-depd?branch=master
 [node-image]: https://img.shields.io/node/v/depd.svg?style=flat
 [node-url]: http://nodejs.org/download/
-[gittip-image]: https://img.shields.io/gittip/dougwilson.svg?style=flat
-[gittip-url]: https://www.gittip.com/dougwilson/
+[gratipay-image]: https://img.shields.io/gratipay/dougwilson.svg?style=flat
+[gratipay-url]: https://www.gratipay.com/dougwilson/
