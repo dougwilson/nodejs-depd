@@ -25,7 +25,7 @@ var deprecate = require('depd')('my-module')
 
 This library allows you to display deprecation messages to your users.
 This library goes above and beyond with deprecation warnings by
-introspecting the call stack (but only the bits that it is interested
+introspection of the call stack (but only the bits that it is interested
 in).
 
 Instead of just warning on the first invocation of a deprecated
@@ -37,6 +37,11 @@ whatever happens to execute first.
 The deprecation warnings from this module also include the file and line
 information for the call into the module that the deprecated function was
 in.
+
+**NOTE** this library has a similar interface to the `debug` module, and
+this module uses the calling file to get the boundary for the call stacks,
+so you should always create a new `deprecate` object in each file and not
+within some central file.
 
 ### depd(namespace)
 
