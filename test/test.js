@@ -1,44 +1,44 @@
 
+var assert = require('assert')
 var basename = require('path').basename
 var bufferConcat = require('../lib/compat').bufferConcat
 var depd = require('..')
 var mylib = require('./fixtures/my-lib')
 var path = require('path')
 var script = path.join(__dirname, 'fixtures', 'script.js')
-var should = require('should')
 var spawn = require('child_process').spawn
 
 describe('depd(namespace)', function () {
   it('creates deprecated function', function () {
-    depd('test').should.be.a.function
+    assert.equal(typeof depd('test'), 'function')
   })
 
   it('requires namespace', function () {
-    depd.bind().should.throw(/namespace.*required/)
+    assert.throws(depd.bind(null), /namespace.*required/)
   })
 })
 
 describe('deprecate(message)', function () {
   it('should log namespace', function () {
     function callold() { mylib.old() }
-    captureStderr(callold).should.containEql('my-lib')
+    assert.ok(captureStderr(callold).indexOf('my-lib') !== -1)
   })
 
   it('should log deprecation', function () {
     function callold() { mylib.old() }
-    captureStderr(callold).should.containEql('deprecate')
+    assert.ok(captureStderr(callold).indexOf('deprecate') !== -1)
   })
 
   it('should log message', function () {
     function callold() { mylib.old() }
-    captureStderr(callold).should.containEql('old')
+    assert.ok(captureStderr(callold).indexOf('old') !== -1)
   })
 
   it('should log call site', function () {
     function callold() { mylib.old() }
     var stderr = captureStderr(callold)
-    stderr.should.containEql(basename(__filename))
-    stderr.should.match(/\.js:[0-9]+:[0-9]+/)
+    assert.ok(stderr.indexOf(basename(__filename)) !== -1)
+    assert.ok(/\.js:[0-9]+:[0-9]+/.test(stderr))
   })
 
   it('should log call site regardless of Error.stackTraceLimit', function () {
@@ -47,8 +47,8 @@ describe('deprecate(message)', function () {
     try {
       Error.stackTraceLimit = 1
       var stderr = captureStderr(callold)
-      stderr.should.containEql(basename(__filename))
-      stderr.should.match(/\.js:[0-9]+:[0-9]+/)
+      assert.ok(stderr.indexOf(basename(__filename)) !== -1)
+      assert.ok(/\.js:[0-9]+:[0-9]+/.test(stderr))
     } finally {
       Error.stackTraceLimit = limit
     }
@@ -57,9 +57,9 @@ describe('deprecate(message)', function () {
   it('should log call site within eval', function () {
     function callold() { eval('mylib.old()') }
     var stderr = captureStderr(callold)
-    stderr.should.containEql(basename(__filename))
-    stderr.should.containEql('<anonymous>:1:')
-    stderr.should.match(/\.js:[0-9]+:[0-9]+/)
+    assert.ok(stderr.indexOf(basename(__filename)) !== -1)
+    assert.ok(stderr.indexOf('<anonymous>:1:') !== -1)
+    assert.ok(/\.js:[0-9]+:[0-9]+/.test(stderr))
   })
 
   it('should only warn once per call site', function () {
@@ -71,8 +71,8 @@ describe('deprecate(message)', function () {
     }
 
     var stderr = captureStderr(callold)
-    stderr.split('deprecated').should.have.length(2)
-    stderr.split('invoke').should.have.length(6)
+    assert.equal(stderr.split('deprecated').length, 2)
+    assert.equal(stderr.split('invoke').length, 6)
   })
 
   it('should warn for different fns on same call site', function () {
@@ -83,10 +83,10 @@ describe('deprecate(message)', function () {
     }
 
     prop = 'old'
-    captureStderr(callold).should.containEql(basename(__filename))
+    assert.ok(captureStderr(callold).indexOf(basename(__filename)) !== -1)
 
     prop = 'old2'
-    captureStderr(callold).should.containEql(basename(__filename))
+    assert.ok(captureStderr(callold).indexOf(basename(__filename)) !== -1)
   })
 
   it('should warn for different calls on same line', function () {
@@ -96,18 +96,18 @@ describe('deprecate(message)', function () {
 
     var stderr = captureStderr(callold)
     var fileline = stderr.match(/\.js:[0-9]+:/)
-    stderr.should.containEql(basename(__filename))
-    stderr.split('deprecated').should.have.length(3)
-    stderr.split(fileline[0]).should.have.length(3)
+    assert.ok(stderr.indexOf(basename(__filename)) !== -1)
+    assert.equal(stderr.split('deprecated').length, 3)
+    assert.equal(stderr.split(fileline[0]).length, 3)
   })
 
   describe('when message omitted', function () {
     it('should generate message for method call on named function', function () {
       function callold() { mylib.automsgnamed() }
       var stderr = captureStderr(callold)
-      stderr.should.containEql(basename(__filename))
-      stderr.should.containEql('deprecated')
-      stderr.should.containEql(' Object.automsgnamed ')
+      assert.ok(stderr.indexOf(basename(__filename)) !== -1)
+      assert.ok(stderr.indexOf('deprecated') !== -1)
+      assert.ok(stderr.indexOf(' Object.automsgnamed ') !== -1)
     })
 
     it('should generate message for function call on named function', function () {
@@ -116,17 +116,17 @@ describe('deprecate(message)', function () {
         fn()
       }
       var stderr = captureStderr(callold)
-      stderr.should.containEql(basename(__filename))
-      stderr.should.containEql('deprecated')
-      stderr.should.containEql(' automsgnamed ')
+      assert.ok(stderr.indexOf(basename(__filename)) !== -1)
+      assert.ok(stderr.indexOf('deprecated') !== -1)
+      assert.ok(stderr.indexOf(' automsgnamed ') !== -1)
     })
 
     it('should generate message for method call on unnamed function', function () {
       function callold() { mylib.automsg() }
       var stderr = captureStderr(callold)
-      stderr.should.containEql(basename(__filename))
-      stderr.should.containEql('deprecated')
-      stderr.should.containEql(' Object.exports.automsg ')
+      assert.ok(stderr.indexOf(basename(__filename)) !== -1)
+      assert.ok(stderr.indexOf('deprecated') !== -1)
+      assert.ok(stderr.indexOf(' Object.exports.automsg ') !== -1)
     })
 
     it('should generate message for function call on unnamed function', function () {
@@ -135,17 +135,17 @@ describe('deprecate(message)', function () {
         fn()
       }
       var stderr = captureStderr(callold)
-      stderr.should.containEql(basename(__filename))
-      stderr.should.containEql('deprecated')
-      stderr.should.containEql(' exports.automsg ')
+      assert.ok(stderr.indexOf(basename(__filename)) !== -1)
+      assert.ok(stderr.indexOf('deprecated') !== -1)
+      assert.ok(stderr.indexOf(' exports.automsg ') !== -1)
     })
 
     it('should generate message for function call on anonymous function', function () {
       function callold() { mylib.automsganon() }
       var stderr = captureStderr(callold)
-      stderr.should.containEql(basename(__filename))
-      stderr.should.containEql('deprecated')
-      stderr.should.match(/ exports\.automsganon | <anonymous@[^:]+:[0-9]+:[0-9]+> /)
+      assert.ok(stderr.indexOf(basename(__filename)) !== -1)
+      assert.ok(stderr.indexOf('deprecated') !== -1)
+      assert.ok(/ exports\.automsganon | <anonymous@[^:]+:[0-9]+:[0-9]+> /.test(stderr))
     })
   })
 
@@ -157,25 +157,25 @@ describe('deprecate(message)', function () {
     })
 
     it('should log in color', function () {
-      stderr.should.not.be.empty
-      stderr.should.containEql('\x1b[')
+      assert.notEqual(stderr, '')
+      assert.ok(stderr.indexOf('\x1b[') !== -1)
     })
 
     it('should log namespace', function () {
-      stderr.should.containEql('my-lib')
+      assert.ok(stderr.indexOf('my-lib') !== -1)
     })
 
     it('should log deprecation', function () {
-      stderr.should.containEql('deprecate')
+      assert.ok(stderr.indexOf('deprecate') !== -1)
     })
 
     it('should log message', function () {
-      stderr.should.containEql('old')
+      assert.ok(stderr.indexOf('old') !== -1)
     })
 
     it('should log call site', function () {
-      stderr.should.containEql(basename(__filename))
-      stderr.should.match(/\.js:[0-9]+:[0-9]+/)
+      assert.ok(stderr.indexOf(basename(__filename)) !== -1)
+      assert.ok(/\.js:[0-9]+:[0-9]+/.test(stderr))
     })
   })
 
@@ -187,29 +187,29 @@ describe('deprecate(message)', function () {
     })
 
     it('should not log in color', function () {
-      stderr.should.not.be.empty
-      stderr.should.not.containEql('\x1b[')
+      assert.notEqual(stderr, '')
+      assert.ok(stderr.indexOf('\x1b[') === -1)
     })
 
     it('should log namespace', function () {
-      stderr.should.containEql('my-lib')
+      assert.ok(stderr.indexOf('my-lib') !== -1)
     })
 
     it('should log timestamp', function () {
-      stderr.should.match(/\w+, \d+ \w+ \d{4} \d{2}:\d{2}:\d{2} \w{3}/)
+      assert.ok(/\w+, \d+ \w+ \d{4} \d{2}:\d{2}:\d{2} \w{3}/.test(stderr))
     })
 
     it('should log deprecation', function () {
-      stderr.should.containEql('deprecate')
+      assert.ok(stderr.indexOf('deprecate') !== -1)
     })
 
     it('should log message', function () {
-      stderr.should.containEql('old')
+      assert.ok(stderr.indexOf('old') !== -1)
     })
 
     it('should log call site', function () {
-      stderr.should.containEql(basename(__filename))
-      stderr.should.match(/\.js:[0-9]+:[0-9]+/)
+      assert.ok(stderr.indexOf(basename(__filename)) !== -1)
+      assert.ok(/\.js:[0-9]+:[0-9]+/.test(stderr))
     })
   })
 })
@@ -217,30 +217,30 @@ describe('deprecate(message)', function () {
 describe('deprecate.function(fn, message)', function () {
   it('should thrown when not given function', function () {
     var deprecate = depd('test')
-    deprecate.function.bind(deprecate, 2).should.throw(/fn.*function/)
+    assert.throws(deprecate.function.bind(deprecate, 2), /fn.*function/)
   })
 
   it('should log on call to function', function () {
     function callold() { mylib.oldfn() }
-    captureStderr(callold).should.containEql(' oldfn ')
+    assert.ok(captureStderr(callold).indexOf(' oldfn ') !== -1)
   })
 
   it('should have same arity', function () {
-    mylib.oldfn.should.have.length(2)
+    assert.equal(mylib.oldfn.length, 2)
   })
 
   it('should pass arguments', function () {
     var ret
     function callold() { ret = mylib.oldfn(1, 2) }
-    captureStderr(callold).should.containEql(' oldfn ')
-    ret.should.equal(2)
+    assert.ok(captureStderr(callold).indexOf(' oldfn ') !== -1)
+    assert.equal(ret, 2)
   })
 
   it('should show call site outside scope', function () {
     function callold() { mylib.layerfn() }
     var stderr = captureStderr(callold)
-    stderr.should.containEql(' oldfn ')
-    stderr.should.match(/test.js:[0-9]+:[0-9]+/)
+    assert.ok(stderr.indexOf(' oldfn ') !== -1)
+    assert.ok(/test.js:[0-9]+:[0-9]+/.test(stderr))
   })
 
   it('should only warn once per call site', function () {
@@ -252,8 +252,8 @@ describe('deprecate.function(fn, message)', function () {
     }
 
     var stderr = captureStderr(callold)
-    stderr.split('deprecated').should.have.length(2)
-    stderr.split('invoke').should.have.length(6)
+    assert.equal(stderr.split('deprecated').length, 2)
+    assert.equal(stderr.split('invoke').length, 6)
   })
 
   it('should handle rapid calling of deprecated thing', function () {
@@ -264,7 +264,7 @@ describe('deprecate.function(fn, message)', function () {
     }
 
     var stderr = captureStderr(callold)
-    stderr.split('deprecated').should.have.length(2)
+    assert.equal(stderr.split('deprecated').length, 2)
   })
 
   it('should warn for different calls on same line', function () {
@@ -274,28 +274,28 @@ describe('deprecate.function(fn, message)', function () {
 
     var stderr = captureStderr(callold)
     var fileline = stderr.match(/\.js:[0-9]+:/)
-    stderr.should.containEql(basename(__filename))
-    stderr.split('deprecated').should.have.length(3)
-    stderr.split(fileline[0]).should.have.length(3)
+    assert.ok(stderr.indexOf(basename(__filename)) !== -1)
+    assert.equal(stderr.split('deprecated').length, 3)
+    assert.equal(stderr.split(fileline[0]).length, 3)
   })
 
   describe('when message omitted', function () {
     it('should generate message for method call on named function', function () {
       function callold() { mylib.oldfnauto() }
       var stderr = captureStderr(callold)
-      stderr.should.containEql(basename(__filename))
-      stderr.should.containEql('deprecated')
-      stderr.should.containEql(' Object.fn ')
-      stderr.should.match(/ at [^:]+test\.js:/)
+      assert.ok(stderr.indexOf(basename(__filename)) !== -1)
+      assert.ok(stderr.indexOf('deprecated') !== -1)
+      assert.ok(stderr.indexOf(' Object.fn ') !== -1)
+      assert.ok(/ at [^:]+test\.js:/.test(stderr))
     })
 
     it('should generate message for method call on anonymous function', function () {
       function callold() { mylib.oldfnautoanon() }
       var stderr = captureStderr(callold)
-      stderr.should.containEql(basename(__filename))
-      stderr.should.containEql('deprecated')
-      stderr.should.match(/ <anonymous@[^:]+my-lib\.js:[0-9]+:[0-9]+> /)
-      stderr.should.match(/ at [^:]+test\.js:/)
+      assert.ok(stderr.indexOf(basename(__filename)) !== -1)
+      assert.ok(stderr.indexOf('deprecated') !== -1)
+      assert.ok(/ <anonymous@[^:]+my-lib\.js:[0-9]+:[0-9]+> /.test(stderr))
+      assert.ok(/ at [^:]+test\.js:/.test(stderr))
     })
   })
 })
@@ -303,27 +303,27 @@ describe('deprecate.function(fn, message)', function () {
 describe('deprecate.property(obj, prop, message)', function () {
   it('should throw when given primitive', function () {
     var deprecate = depd('test')
-    deprecate.property.bind(deprecate, 2).should.throw(/obj.*object/)
+    assert.throws(deprecate.property.bind(deprecate, 2), /obj.*object/)
   })
 
   it('should throw when given missing property', function () {
     var deprecate = depd('test')
     var obj = {}
-    deprecate.property.bind(deprecate, obj, 'blargh').should.throw(/property.*owner/)
+    assert.throws(deprecate.property.bind(deprecate, obj, 'blargh'), /property.*owner/)
   })
 
   it('should throw when given non-configurable property', function () {
     var deprecate = depd('test')
     var obj = {}
     Object.defineProperty(obj, 'thing', {value: 'thingie'})
-    deprecate.property.bind(deprecate, obj, 'thing').should.throw(/property.*configurable/)
+    assert.throws(deprecate.property.bind(deprecate, obj, 'thing'), /property.*configurable/)
   })
 
   it('should log on access to property', function () {
     function callprop() { mylib.propa }
     var stderr = captureStderr(callprop)
-    stderr.should.containEql(' deprecated ')
-    stderr.should.containEql(' propa gone ')
+    assert.ok(stderr.indexOf(' deprecated ') !== -1)
+    assert.ok(stderr.indexOf(' propa gone ') !== -1)
   })
 
   it('should log on setting property', function () {
@@ -331,10 +331,10 @@ describe('deprecate.property(obj, prop, message)', function () {
     function callprop() { val = mylib.propa }
     function setprop() { mylib.propa = 'newval' }
     var stderr = captureStderr(setprop)
-    stderr.should.containEql(' deprecated ')
-    stderr.should.containEql(' propa gone ')
-    captureStderr(callprop).should.containEql(' deprecated ')
-    val.should.equal('newval')
+    assert.ok(stderr.indexOf(' deprecated ') !== -1)
+    assert.ok(stderr.indexOf(' propa gone ') !== -1)
+    assert.ok(captureStderr(callprop).indexOf(' deprecated ') !== -1)
+    assert.equal(val, 'newval')
   })
 
   it('should only warn once per call site', function () {
@@ -346,8 +346,8 @@ describe('deprecate.property(obj, prop, message)', function () {
     }
 
     var stderr = captureStderr(callold)
-    stderr.split('deprecated').should.have.length(2)
-    stderr.split('access').should.have.length(6)
+    assert.equal(stderr.split('deprecated').length, 2)
+    assert.equal(stderr.split('access').length, 6)
   })
 
   it('should warn for different accesses on same line', function () {
@@ -357,31 +357,31 @@ describe('deprecate.property(obj, prop, message)', function () {
 
     var stderr = captureStderr(callold)
     var fileline = stderr.match(/\.js:[0-9]+:/)
-    stderr.should.containEql(basename(__filename))
-    stderr.split('deprecated').should.have.length(3)
-    stderr.split(fileline[0]).should.have.length(3)
+    assert.ok(stderr.indexOf(basename(__filename)) !== -1)
+    assert.equal(stderr.split('deprecated').length, 3)
+    assert.equal(stderr.split(fileline[0]).length, 3)
   })
 
   it('should show call site outside scope', function () {
     function callold() { mylib.layerprop() }
     var stderr = captureStderr(callold)
-    stderr.should.containEql(' propa ')
-    stderr.should.match(/test.js:[0-9]+:[0-9]+/)
+    assert.ok(stderr.indexOf(' propa ') !== -1)
+    assert.ok(/test.js:[0-9]+:[0-9]+/.test(stderr))
   })
 
   describe('when obj is a function', function () {
     it('should log on access to property on function', function () {
       function callprop() { mylib.fnprop.propa }
       var stderr = captureStderr(callprop)
-      stderr.should.containEql(' deprecated ')
-      stderr.should.containEql(' fn propa gone ')
+      assert.ok(stderr.indexOf(' deprecated ') !== -1)
+      assert.ok(stderr.indexOf(' fn propa gone ') !== -1)
     })
 
     it('should generate message on named function', function () {
       function callprop() { mylib.fnprop.propautomsg }
       var stderr = captureStderr(callprop)
-      stderr.should.containEql(' deprecated ')
-      stderr.should.containEql(' thefn.propautomsg ')
+      assert.ok(stderr.indexOf(' deprecated ') !== -1)
+      assert.ok(stderr.indexOf(' thefn.propautomsg ') !== -1)
     })
   })
 
@@ -389,15 +389,15 @@ describe('deprecate.property(obj, prop, message)', function () {
     it('should log on access and set', function () {
       function callold() { mylib.propa }
       function setold() { mylib.propa = 'val' }
-      captureStderr(callold).should.containEql(' deprecated ')
-      captureStderr(setold).should.containEql(' deprecated ')
+      assert.ok(captureStderr(callold).indexOf(' deprecated ') !== -1)
+      assert.ok(captureStderr(setold).indexOf(' deprecated ') !== -1)
     })
 
     it('should not log on set to non-writable', function () {
       function callold() { mylib.propget }
       function setold() { mylib.propget = 'val' }
-      captureStderr(callold).should.containEql(' deprecated ')
-      captureStderr(setold).should.be.empty
+      assert.ok(captureStderr(callold).indexOf(' deprecated ') !== -1)
+      assert.equal(captureStderr(setold), '')
     })
   })
 
@@ -405,18 +405,18 @@ describe('deprecate.property(obj, prop, message)', function () {
     it('should log on access and set', function () {
       function callold() { mylib.propdyn }
       function setold() { mylib.propdyn = 'val' }
-      captureStderr(callold).should.containEql(' deprecated ')
-      captureStderr(setold).should.containEql(' deprecated ')
+      assert.ok(captureStderr(callold).indexOf(' deprecated ') !== -1)
+      assert.ok(captureStderr(setold).indexOf(' deprecated ') !== -1)
     })
 
     it('should not log on access when no accessor', function () {
       function callold() { mylib.propsetter }
-      captureStderr(callold).should.be.empty
+      assert.equal(captureStderr(callold), '')
     })
 
     it('should not log on set when no setter', function () {
       function callold() { mylib.propgetter = 'val' }
-      captureStderr(callold).should.be.empty
+      assert.equal(captureStderr(callold), '')
     })
   })
 
@@ -424,10 +424,10 @@ describe('deprecate.property(obj, prop, message)', function () {
     it('should generate message for method call on named function', function () {
       function callold() { mylib.propauto }
       var stderr = captureStderr(callold)
-      stderr.should.containEql(basename(__filename))
-      stderr.should.containEql('deprecated')
-      stderr.should.containEql(' Object.propauto ')
-      stderr.should.match(/ at [^:]+test\.js:/)
+      assert.ok(stderr.indexOf(basename(__filename)) !== -1)
+      assert.ok(stderr.indexOf('deprecated') !== -1)
+      assert.ok(stderr.indexOf(' Object.propauto ') !== -1)
+      assert.ok(/ at [^:]+test\.js:/.test(stderr))
     })
   })
 })
@@ -447,50 +447,46 @@ describe('process.on(\'deprecation\', fn)', function () {
   function ondeprecation(err) { error = err }
 
   it('should not write when listener exists', function () {
-    stderr.should.be.empty
+    assert.equal(stderr, '')
   })
 
   it('should emit error', function () {
-    error.should.be.ok
+    assert.ok(error)
   })
 
   it('should emit DeprecationError', function () {
-    error.name.should.equal('DeprecationError')
-  })
-
-  it('should emit DeprecationError', function () {
-    error.name.should.equal('DeprecationError')
+    assert.equal(error.name, 'DeprecationError')
   })
 
   it('should emit error with message', function () {
-    error.message.should.equal('old')
+    assert.equal(error.message, 'old')
   })
 
   it('should emit error with namespace', function () {
-    error.namespace.should.equal('my-lib')
+    assert.equal(error.namespace, 'my-lib')
   })
 
   it('should emit error with proper [[Class]]', function () {
-    Object.prototype.toString.call(error).should.equal('[object Error]')
+    assert.equal(Object.prototype.toString.call(error), '[object Error]')
   })
 
   it('should be instanceof Error', function () {
-    error.should.be.instanceof(Error)
+    assert.ok(error instanceof Error)
   })
 
   it('should emit error with proper stack', function () {
     var stack = error.stack.split('\n')
-    stack[0].should.equal('DeprecationError: my-lib deprecated old')
-    stack[1].should.match(/    at callold \(.+test\.js:[0-9]+:[0-9]+\)/)
+    assert.equal(stack[0], 'DeprecationError: my-lib deprecated old')
+    assert.ok(/    at callold \(.+test\.js:[0-9]+:[0-9]+\)/.test(stack[1]))
   })
 
   it('should have writable properties', function () {
     error.name = 'bname'
-    error.name.should.equal('bname')
+    assert.equal(error.name, 'bname')
     error.message = 'bmessage'
-    error.message.should.equal('bmessage')
+    assert.equal(error.message, 'bmessage')
     error.stack = 'bstack'
-    error.stack.should.equal('bstack')
+    assert.equal(error.stack, 'bstack')
   })
 })
 
@@ -513,37 +509,37 @@ describe('process.env.NO_DEPRECATION', function () {
   it('should suppress given namespace', function () {
     process.env.NO_DEPRECATION = 'old-lib'
     var oldlib = require('./fixtures/old-lib')
-    captureStderr(oldlib.old).should.be.empty
-    captureStderr(oldlib.old2).should.not.be.empty
+    assert.equal(captureStderr(oldlib.old), '')
+    assert.notEqual(captureStderr(oldlib.old2), '')
   })
 
   it('should suppress multiple namespaces', function () {
     process.env.NO_DEPRECATION = 'cool-lib,neat-lib'
     var coollib = require('./fixtures/cool-lib')
-    captureStderr(coollib.cool).should.be.empty
-    captureStderr(coollib.neat).should.be.empty
+    assert.equal(captureStderr(coollib.cool), '')
+    assert.equal(captureStderr(coollib.neat), '')
   })
 
   it('should be case-insensitive', function () {
     process.env.NO_DEPRECATION = 'NEW-LIB'
     var newlib = require('./fixtures/new-lib')
-    captureStderr(newlib.old).should.be.empty
+    assert.equal(captureStderr(newlib.old), '')
   })
 
   it('should emit "deprecation" events anyway', function () {
     process.env.NO_DEPRECATION = 'thing-lib'
     var thinglib = require('./fixtures/thing-lib')
     process.on('deprecation', ondeprecation)
-    captureStderr(thinglib.old).should.be.empty
-    error.namespace.should.equal('thing-lib')
+    assert.equal(captureStderr(thinglib.old), '')
+    assert.equal(error.namespace, 'thing-lib')
   })
 
   describe('when *', function () {
     it('should suppress any namespace', function () {
       process.env.NO_DEPRECATION = '*'
       var multilib = require('./fixtures/multi-lib')
-      captureStderr(multilib.old).should.be.empty
-      captureStderr(multilib.old2).should.be.empty
+      assert.equal(captureStderr(multilib.old), '')
+      assert.equal(captureStderr(multilib.old2), '')
     })
   })
 })
@@ -560,13 +556,13 @@ describe('process.env.TRACE_DEPRECATION', function () {
   it('should trace given namespace', function () {
     var tracelib = require('./fixtures/trace-lib')
     function callold() { tracelib.old() }
-    captureStderr(callold).should.containEql(' trace-lib deprecated old\n    at callold (')
+    assert.ok(captureStderr(callold).indexOf(' trace-lib deprecated old\n    at callold (') !== -1)
   })
 
   it('should not trace non-given namespace', function () {
     var tracelib = require('./fixtures/trace-lib')
     function callold() { tracelib.old2() }
-    captureStderr(callold).should.containEql(' trace-lib-other deprecated old2 at ')
+    assert.ok(captureStderr(callold).indexOf(' trace-lib-other deprecated old2 at ') !== -1)
   })
 
   describe('when output supports colors', function () {
@@ -578,17 +574,17 @@ describe('process.env.TRACE_DEPRECATION', function () {
     })
 
     it('should log in color', function () {
-      stderr.should.not.be.empty
-      stderr.should.containEql('\x1b[')
+      assert.notEqual(stderr, '')
+      assert.ok(stderr.indexOf('\x1b[') !== -1)
     })
 
     it('should log namespace', function () {
-      stderr.should.containEql('trace-lib')
+      assert.ok(stderr.indexOf('trace-lib') !== -1)
     })
 
     it('should log call site in color', function () {
-      stderr.should.containEql(basename(__filename))
-      stderr.should.match(/\x1b\[\d+mat callold \(/)
+      assert.ok(stderr.indexOf(basename(__filename)) !== -1)
+      assert.ok(/\x1b\[\d+mat callold \(/.test(stderr))
     })
   })
 })
@@ -599,7 +595,7 @@ describe('node script.js', function () {
       if (err) return done(err)
       var filename = path.relative(process.cwd(), script)
       stderr = stderr.replace(/\w+, \d+ \w+ \d+ \d+:\d+:\d+ \w+/, '__timestamp__')
-      stderr.should.equal('__timestamp__ my-cool-module deprecated oldfunction at ' + filename + ':7:10\n')
+      assert.equal(stderr, '__timestamp__ my-cool-module deprecated oldfunction at ' + filename + ':7:10\n')
       done()
     })
   })
@@ -616,7 +612,7 @@ describe('node script.js', function () {
     it('should suppress deprecation message', function (done) {
       captureChildStderr(['--no-deprecation', script], function (err, stderr) {
         if (err) return done(err)
-        stderr.should.be.empty
+        assert.equal(stderr, '')
         done()
       })
     })
@@ -627,7 +623,7 @@ describe('node script.js', function () {
       captureChildStderr(['--trace-deprecation', script], function (err, stderr) {
         if (err) return done(err)
         stderr = stderr.replace(/\w+, \d+ \w+ \d+ \d+:\d+:\d+ \w+/, '__timestamp__')
-        stderr.should.startWith('__timestamp__ my-cool-module deprecated oldfunction\n    at run (' + script + ':7:10)\n    at')
+        assert.ok(stderr.indexOf('__timestamp__ my-cool-module deprecated oldfunction\n    at run (' + script + ':7:10)\n    at') === 0)
         done()
       })
     })
