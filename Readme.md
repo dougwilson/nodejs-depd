@@ -258,14 +258,14 @@ deprecate.property(exports, 'oldprop', 'oldprop >= 0.10')
 
 [MIT](LICENSE)
 
-[npm-version-image]: https://img.shields.io/npm/v/depd.svg?style=flat
-[npm-downloads-image]: https://img.shields.io/npm/dm/depd.svg?style=flat
+[npm-version-image]: https://img.shields.io/npm/v/depd.svg
+[npm-downloads-image]: https://img.shields.io/npm/dm/depd.svg
 [npm-url]: https://npmjs.org/package/depd
-[travis-image]: https://img.shields.io/travis/dougwilson/nodejs-depd.svg?style=flat
+[travis-image]: https://img.shields.io/travis/dougwilson/nodejs-depd/master.svg
 [travis-url]: https://travis-ci.org/dougwilson/nodejs-depd
-[coveralls-image]: https://img.shields.io/coveralls/dougwilson/nodejs-depd.svg?style=flat
+[coveralls-image]: https://img.shields.io/coveralls/dougwilson/nodejs-depd/master.svg
 [coveralls-url]: https://coveralls.io/r/dougwilson/nodejs-depd?branch=master
-[node-image]: https://img.shields.io/node/v/depd.svg?style=flat
+[node-image]: https://img.shields.io/node/v/depd.svg
 [node-url]: http://nodejs.org/download/
-[gratipay-image]: https://img.shields.io/gratipay/dougwilson.svg?style=flat
+[gratipay-image]: https://img.shields.io/gratipay/dougwilson.svg
 [gratipay-url]: https://www.gratipay.com/dougwilson/
