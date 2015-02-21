@@ -243,13 +243,14 @@ function log(message, site) {
   }
 
   // format and write message
-  var format = process.stderr.isTTY
+  var format = process.stderr && process.stderr.isTTY
     ? formatColor
     : formatPlain
   var msg = format.call(this, message, caller, stack.slice(i))
-  process.stderr.write(msg + '\n', 'utf8')
-
-  return
+  if (process.stderr) {
+    return process.stderr.write(msg + '\n', 'utf8')
+  }
+  console.error(msg);
 }
 
 /**
