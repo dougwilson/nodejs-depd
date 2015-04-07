@@ -107,7 +107,7 @@ describe('deprecate(message)', function () {
       var stderr = captureStderr(callold)
       assert.ok(stderr.indexOf(basename(__filename)) !== -1)
       assert.ok(stderr.indexOf('deprecated') !== -1)
-      assert.ok(stderr.indexOf(' Object.automsgnamed ') !== -1)
+      assert.ok(stderr.indexOf(' automsgnamed ') !== -1)
     })
 
     it('should generate message for function call on named function', function () {
@@ -126,7 +126,7 @@ describe('deprecate(message)', function () {
       var stderr = captureStderr(callold)
       assert.ok(stderr.indexOf(basename(__filename)) !== -1)
       assert.ok(stderr.indexOf('deprecated') !== -1)
-      assert.ok(stderr.indexOf(' Object.exports.automsg ') !== -1)
+      assert.ok(stderr.indexOf(' exports.automsg ') !== -1)
     })
 
     it('should generate message for function call on unnamed function', function () {
@@ -285,7 +285,7 @@ describe('deprecate.function(fn, message)', function () {
       var stderr = captureStderr(callold)
       assert.ok(stderr.indexOf(basename(__filename)) !== -1)
       assert.ok(stderr.indexOf('deprecated') !== -1)
-      assert.ok(stderr.indexOf(' Object.fn ') !== -1)
+      assert.ok(stderr.indexOf(' fn ') !== -1)
       assert.ok(/ at [^:]+test\.js:/.test(stderr))
     })
 
@@ -426,7 +426,7 @@ describe('deprecate.property(obj, prop, message)', function () {
       var stderr = captureStderr(callold)
       assert.ok(stderr.indexOf(basename(__filename)) !== -1)
       assert.ok(stderr.indexOf('deprecated') !== -1)
-      assert.ok(stderr.indexOf(' Object.propauto ') !== -1)
+      assert.ok(stderr.indexOf(' propauto ') !== -1)
       assert.ok(/ at [^:]+test\.js:/.test(stderr))
     })
   })

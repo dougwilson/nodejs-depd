@@ -287,12 +287,17 @@ function defaultMessage(site) {
     funcName = '<anonymous@' + formatLocation(site) + '>'
   }
 
+  // ignore useless type name
+  if (typeName === 'Object') {
+    typeName = undefined
+  }
+
   // make useful type name
   if (typeName === 'Function') {
     typeName = callSite.getThis().name || typeName
   }
 
-  return callSite.getMethodName()
+  return typeName && callSite.getMethodName()
     ? typeName + '.' + funcName
     : funcName
 }
