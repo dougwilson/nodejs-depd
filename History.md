@@ -1,3 +1,9 @@
+unreleased
+==========
+
+  * Support io.js 1.x
+  * Support Node.js 0.12
+
 1.0.0 / 2014-09-17
 ==================
 
