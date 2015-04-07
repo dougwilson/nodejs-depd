@@ -7,6 +7,7 @@ var mylib = require('./fixtures/my-lib')
 var path = require('path')
 var script = path.join(__dirname, 'fixtures', 'script.js')
 var spawn = require('child_process').spawn
+var strictlib = require('./fixtures/strict-lib')
 
 describe('depd(namespace)', function () {
   it('creates deprecated function', function () {
@@ -41,6 +42,13 @@ describe('deprecate(message)', function () {
     assert.ok(/\.js:[0-9]+:[0-9]+/.test(stderr))
   })
 
+  it('should log call site from strict lib', function () {
+    function callold() { strictlib.old() }
+    var stderr = captureStderr(callold)
+    assert.ok(stderr.indexOf(basename(__filename)) !== -1)
+    assert.ok(/\.js:[0-9]+:[0-9]+/.test(stderr))
+  })
+
   it('should log call site regardless of Error.stackTraceLimit', function () {
     function callold() { mylib.old() }
     var limit = Error.stackTraceLimit
@@ -59,6 +67,13 @@ describe('deprecate(message)', function () {
     var stderr = captureStderr(callold)
     assert.ok(stderr.indexOf(basename(__filename)) !== -1)
     assert.ok(stderr.indexOf('<anonymous>:1:') !== -1)
+    assert.ok(/\.js:[0-9]+:[0-9]+/.test(stderr))
+  })
+
+  it('should log call site within strict', function () {
+    function callold() { 'use strict'; mylib.old() }
+    var stderr = captureStderr(callold)
+    assert.ok(stderr.indexOf(basename(__filename)) !== -1)
     assert.ok(/\.js:[0-9]+:[0-9]+/.test(stderr))
   })
 
@@ -147,6 +162,54 @@ describe('deprecate(message)', function () {
       assert.ok(stderr.indexOf('deprecated') !== -1)
       assert.ok(/ exports\.automsganon | <anonymous@[^:]+:[0-9]+:[0-9]+> /.test(stderr))
     })
+
+    describe('in strict mode library', function () {
+      it('should generate message for method call on named function', function () {
+        function callold() { strictlib.automsgnamed() }
+        var stderr = captureStderr(callold)
+        assert.ok(stderr.indexOf(basename(__filename)) !== -1)
+        assert.ok(stderr.indexOf('deprecated') !== -1)
+        assert.ok(stderr.indexOf(' automsgnamed ') !== -1)
+      })
+
+      it('should generate message for function call on named function', function () {
+        function callold() {
+          var fn = strictlib.automsgnamed
+          fn()
+        }
+        var stderr = captureStderr(callold)
+        assert.ok(stderr.indexOf(basename(__filename)) !== -1)
+        assert.ok(stderr.indexOf('deprecated') !== -1)
+        assert.ok(stderr.indexOf(' automsgnamed ') !== -1)
+      })
+
+      it('should generate message for method call on unnamed function', function () {
+        function callold() { strictlib.automsg() }
+        var stderr = captureStderr(callold)
+        assert.ok(stderr.indexOf(basename(__filename)) !== -1)
+        assert.ok(stderr.indexOf('deprecated') !== -1)
+        assert.ok(stderr.indexOf(' exports.automsg ') !== -1)
+      })
+
+      it('should generate message for function call on unnamed function', function () {
+        function callold() {
+          var fn = strictlib.automsg
+          fn()
+        }
+        var stderr = captureStderr(callold)
+        assert.ok(stderr.indexOf(basename(__filename)) !== -1)
+        assert.ok(stderr.indexOf('deprecated') !== -1)
+        assert.ok(stderr.indexOf(' exports.automsg ') !== -1)
+      })
+
+      it('should generate message for function call on anonymous function', function () {
+        function callold() { strictlib.automsganon() }
+        var stderr = captureStderr(callold)
+        assert.ok(stderr.indexOf(basename(__filename)) !== -1)
+        assert.ok(stderr.indexOf('deprecated') !== -1)
+        assert.ok(/ exports\.automsganon | <anonymous@[^:]+:[0-9]+:[0-9]+> /.test(stderr))
+      })
+    })
   })
 
   describe('when output supports colors', function () {
@@ -215,7 +278,7 @@ describe('deprecate(message)', function () {
 })
 
 describe('deprecate.function(fn, message)', function () {
-  it('should thrown when not given function', function () {
+  it('should throw when not given function', function () {
     var deprecate = depd('test')
     assert.throws(deprecate.function.bind(deprecate, 2), /fn.*function/)
   })
@@ -238,6 +301,13 @@ describe('deprecate.function(fn, message)', function () {
 
   it('should show call site outside scope', function () {
     function callold() { mylib.layerfn() }
+    var stderr = captureStderr(callold)
+    assert.ok(stderr.indexOf(' oldfn ') !== -1)
+    assert.ok(/test.js:[0-9]+:[0-9]+/.test(stderr))
+  })
+
+  it('should show call site outside scope from strict lib', function () {
+    function callold() { strictlib.layerfn() }
     var stderr = captureStderr(callold)
     assert.ok(stderr.indexOf(' oldfn ') !== -1)
     assert.ok(/test.js:[0-9]+:[0-9]+/.test(stderr))
@@ -296,6 +366,26 @@ describe('deprecate.function(fn, message)', function () {
       assert.ok(stderr.indexOf('deprecated') !== -1)
       assert.ok(/ <anonymous@[^:]+my-lib\.js:[0-9]+:[0-9]+> /.test(stderr))
       assert.ok(/ at [^:]+test\.js:/.test(stderr))
+    })
+
+    describe('in strict mode library', function () {
+      it('should generate message for method call on named function', function () {
+        function callold() { strictlib.oldfnauto() }
+        var stderr = captureStderr(callold)
+        assert.ok(stderr.indexOf(basename(__filename)) !== -1)
+        assert.ok(stderr.indexOf('deprecated') !== -1)
+        assert.ok(stderr.indexOf(' fn ') !== -1)
+        assert.ok(/ at [^:]+test\.js:/.test(stderr))
+      })
+
+      it('should generate message for method call on anonymous function', function () {
+        function callold() { strictlib.oldfnautoanon() }
+        var stderr = captureStderr(callold)
+        assert.ok(stderr.indexOf(basename(__filename)) !== -1)
+        assert.ok(stderr.indexOf('deprecated') !== -1)
+        assert.ok(/ <anonymous@[^:]+strict-lib\.js:[0-9]+:[0-9]+> /.test(stderr))
+        assert.ok(/ at [^:]+test\.js:/.test(stderr))
+      })
     })
   })
 })
@@ -369,6 +459,13 @@ describe('deprecate.property(obj, prop, message)', function () {
     assert.ok(/test.js:[0-9]+:[0-9]+/.test(stderr))
   })
 
+  it('should show call site outside scope from strict lib', function () {
+    function callold() { strictlib.layerprop() }
+    var stderr = captureStderr(callold)
+    assert.ok(stderr.indexOf(' propa ') !== -1)
+    assert.ok(/test.js:[0-9]+:[0-9]+/.test(stderr))
+  })
+
   describe('when obj is a function', function () {
     it('should log on access to property on function', function () {
       function callprop() { mylib.fnprop.propa }
@@ -382,6 +479,22 @@ describe('deprecate.property(obj, prop, message)', function () {
       var stderr = captureStderr(callprop)
       assert.ok(stderr.indexOf(' deprecated ') !== -1)
       assert.ok(stderr.indexOf(' thefn.propautomsg ') !== -1)
+    })
+
+    describe('in strict mode library', function () {
+      it('should log on access to property on function', function () {
+        function callprop() { strictlib.fnprop.propa }
+        var stderr = captureStderr(callprop)
+        assert.ok(stderr.indexOf(' deprecated ') !== -1)
+        assert.ok(stderr.indexOf(' fn propa gone ') !== -1)
+      })
+
+      it('should generate message on named function', function () {
+        function callprop() { strictlib.fnprop.propautomsg }
+        var stderr = captureStderr(callprop)
+        assert.ok(stderr.indexOf(' deprecated ') !== -1)
+        assert.ok(stderr.indexOf(' thefn.propautomsg ') !== -1)
+      })
     })
   })
 
@@ -428,6 +541,17 @@ describe('deprecate.property(obj, prop, message)', function () {
       assert.ok(stderr.indexOf('deprecated') !== -1)
       assert.ok(stderr.indexOf(' propauto ') !== -1)
       assert.ok(/ at [^:]+test\.js:/.test(stderr))
+    })
+
+    describe('in strict mode library', function () {
+      it('should generate message for method call on named function', function () {
+        function callold() { strictlib.propauto }
+        var stderr = captureStderr(callold)
+        assert.ok(stderr.indexOf(basename(__filename)) !== -1)
+        assert.ok(stderr.indexOf('deprecated') !== -1)
+        assert.ok(stderr.indexOf(' propauto ') !== -1)
+        assert.ok(/ at [^:]+test\.js:/.test(stderr))
+      })
     })
   })
 })

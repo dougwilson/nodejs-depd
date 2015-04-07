@@ -1,6 +1,7 @@
 unreleased
 ==========
 
+  * Fix `TypeError`s when under `'use strict'` code
   * Fix useless type name on auto-generated messages
   * Support io.js 1.x
   * Support Node.js 0.12

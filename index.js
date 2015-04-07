@@ -280,12 +280,14 @@ function callSiteLocation(callSite) {
 function defaultMessage(site) {
   var callSite = site.callSite
   var funcName = site.name
-  var typeName = callSite.getTypeName()
 
   // make useful anonymous name
   if (!funcName) {
     funcName = '<anonymous@' + formatLocation(site) + '>'
   }
+
+  var context = callSite.getThis()
+  var typeName = context && callSite.getTypeName()
 
   // ignore useless type name
   if (typeName === 'Object') {
@@ -294,7 +296,7 @@ function defaultMessage(site) {
 
   // make useful type name
   if (typeName === 'Function') {
-    typeName = callSite.getThis().name || typeName
+    typeName = context.name || typeName
   }
 
   return typeName && callSite.getMethodName()
