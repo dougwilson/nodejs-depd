@@ -1,5 +1,5 @@
-unreleased
-==========
+1.0.1 / 2015-04-07
+==================
 
   * Fix `TypeError`s when under `'use strict'` code
   * Fix useless type name on auto-generated messages
