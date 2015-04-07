@@ -28,7 +28,7 @@
   "scripts": {
     "bench": "node benchmark/index.js",
     "test": "mocha --reporter spec --bail test/",
-    "test-cov": "istanbul cover node_modules/mocha/bin/_mocha -- --reporter dot test/",
-    "test-travis": "istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --reporter spec test/"
+    "test-ci": "istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --reporter spec --no-exit test/",
+    "test-cov": "istanbul cover node_modules/mocha/bin/_mocha -- --reporter dot test/"
   }
 }

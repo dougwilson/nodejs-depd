@@ -327,6 +327,8 @@ describe('deprecate.function(fn, message)', function () {
   })
 
   it('should handle rapid calling of deprecated thing', function () {
+    this.timeout(5000)
+
     function callold() {
       for (var i = 0; i < 10000; i++) {
         mylib.oldfn()

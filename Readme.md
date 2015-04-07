@@ -3,7 +3,8 @@
 [![NPM Version][npm-version-image]][npm-url]
 [![NPM Downloads][npm-downloads-image]][npm-url]
 [![Node.js Version][node-image]][node-url]
-[![Build Status][travis-image]][travis-url]
+[![Linux Build][travis-image]][travis-url]
+[![Windows Build][appveyor-image]][appveyor-url]
 [![Coverage Status][coveralls-image]][coveralls-url]
 [![Gratipay][gratipay-image]][gratipay-url]
 
@@ -261,8 +262,10 @@ deprecate.property(exports, 'oldprop', 'oldprop >= 0.10')
 [npm-version-image]: https://img.shields.io/npm/v/depd.svg
 [npm-downloads-image]: https://img.shields.io/npm/dm/depd.svg
 [npm-url]: https://npmjs.org/package/depd
-[travis-image]: https://img.shields.io/travis/dougwilson/nodejs-depd/master.svg
+[travis-image]: https://img.shields.io/travis/dougwilson/nodejs-depd/master.svg?label=linux
 [travis-url]: https://travis-ci.org/dougwilson/nodejs-depd
+[appveyor-image]: https://img.shields.io/appveyor/ci/dougwilson/nodejs-depd/master.svg?label=windows
+[appveyor-url]: https://ci.appveyor.com/project/dougwilson/nodejs-depd
 [coveralls-image]: https://img.shields.io/coveralls/dougwilson/nodejs-depd/master.svg
 [coveralls-url]: https://coveralls.io/r/dougwilson/nodejs-depd?branch=master
 [node-image]: https://img.shields.io/node/v/depd.svg
