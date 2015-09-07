@@ -3,6 +3,8 @@ unreleased
 
   * Enable strict mode in more places
   * Support io.js 2.x
+  * Support web browser loading
+    - Requires bundler like Browserify or webpack
 
 1.0.1 / 2015-04-07
 ==================

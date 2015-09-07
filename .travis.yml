@@ -9,5 +9,8 @@ node_js:
   - "2.0"
   - "2.5"
 sudo: false
+before_install:
+  # Setup Node.js version-specific dependencies
+  - "test $TRAVIS_NODE_VERSION = '0.6' -o $TRAVIS_NODE_VERSION = '0.8' || npm install browserify"
 script: "npm run-script test-ci"
 after_script: "npm install coveralls@2.10.0 && cat ./coverage/lcov.info | coveralls"

@@ -1,5 +1,5 @@
 
-var oldlib = require('./old-lib')
+var oldlib = require('./libs/old')
 
 run()
 

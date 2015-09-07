@@ -9,6 +9,7 @@
     "deprecated"
   ],
   "repository": "dougwilson/nodejs-depd",
+  "browser": "lib/browser/index.js",
   "devDependencies": {
     "benchmark": "1.0.0",
     "beautify-benchmark": "0.2.4",

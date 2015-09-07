@@ -3,11 +3,12 @@ var assert = require('assert')
 var basename = require('path').basename
 var bufferConcat = require('../lib/compat').bufferConcat
 var depd = require('..')
-var mylib = require('./fixtures/my-lib')
+var libs = require('./fixtures/libs')
+var mylib = libs.my
 var path = require('path')
 var script = path.join(__dirname, 'fixtures', 'script.js')
 var spawn = require('child_process').spawn
-var strictlib = require('./fixtures/strict-lib')
+var strictlib = libs.strict
 
 describe('depd(namespace)', function () {
   it('creates deprecated function', function () {
@@ -366,7 +367,7 @@ describe('deprecate.function(fn, message)', function () {
       var stderr = captureStderr(callold)
       assert.ok(stderr.indexOf(basename(__filename)) !== -1)
       assert.ok(stderr.indexOf('deprecated') !== -1)
-      assert.ok(/ <anonymous@[^:]+my-lib\.js:[0-9]+:[0-9]+> /.test(stderr))
+      assert.ok(/ <anonymous@[^:]+my\.js:[0-9]+:[0-9]+> /.test(stderr))
       assert.ok(/ at [^:]+test\.js:/.test(stderr))
     })
 
@@ -385,7 +386,7 @@ describe('deprecate.function(fn, message)', function () {
         var stderr = captureStderr(callold)
         assert.ok(stderr.indexOf(basename(__filename)) !== -1)
         assert.ok(stderr.indexOf('deprecated') !== -1)
-        assert.ok(/ <anonymous@[^:]+strict-lib\.js:[0-9]+:[0-9]+> /.test(stderr))
+        assert.ok(/ <anonymous@[^:]+strict\.js:[0-9]+:[0-9]+> /.test(stderr))
         assert.ok(/ at [^:]+test\.js:/.test(stderr))
       })
     })
@@ -634,27 +635,27 @@ describe('process.env.NO_DEPRECATION', function () {
 
   it('should suppress given namespace', function () {
     process.env.NO_DEPRECATION = 'old-lib'
-    var oldlib = require('./fixtures/old-lib')
+    var oldlib = libs.old
     assert.equal(captureStderr(oldlib.old), '')
     assert.notEqual(captureStderr(oldlib.old2), '')
   })
 
   it('should suppress multiple namespaces', function () {
     process.env.NO_DEPRECATION = 'cool-lib,neat-lib'
-    var coollib = require('./fixtures/cool-lib')
+    var coollib = libs.cool
     assert.equal(captureStderr(coollib.cool), '')
     assert.equal(captureStderr(coollib.neat), '')
   })
 
   it('should be case-insensitive', function () {
     process.env.NO_DEPRECATION = 'NEW-LIB'
-    var newlib = require('./fixtures/new-lib')
+    var newlib = libs.new
     assert.equal(captureStderr(newlib.old), '')
   })
 
   it('should emit "deprecation" events anyway', function () {
     process.env.NO_DEPRECATION = 'thing-lib'
-    var thinglib = require('./fixtures/thing-lib')
+    var thinglib = libs.thing
     process.on('deprecation', ondeprecation)
     assert.equal(captureStderr(thinglib.old), '')
     assert.equal(error.namespace, 'thing-lib')
@@ -663,7 +664,7 @@ describe('process.env.NO_DEPRECATION', function () {
   describe('when *', function () {
     it('should suppress any namespace', function () {
       process.env.NO_DEPRECATION = '*'
-      var multilib = require('./fixtures/multi-lib')
+      var multilib = libs.multi
       assert.equal(captureStderr(multilib.old), '')
       assert.equal(captureStderr(multilib.old2), '')
     })
@@ -680,13 +681,13 @@ describe('process.env.TRACE_DEPRECATION', function () {
   })
 
   it('should trace given namespace', function () {
-    var tracelib = require('./fixtures/trace-lib')
+    var tracelib = libs.trace
     function callold() { tracelib.old() }
     assert.ok(captureStderr(callold).indexOf(' trace-lib deprecated old\n    at callold (') !== -1)
   })
 
   it('should not trace non-given namespace', function () {
-    var tracelib = require('./fixtures/trace-lib')
+    var tracelib = libs.trace
     function callold() { tracelib.old2() }
     assert.ok(captureStderr(callold).indexOf(' trace-lib-other deprecated old2 at ') !== -1)
   })
@@ -694,7 +695,7 @@ describe('process.env.TRACE_DEPRECATION', function () {
   describe('when output supports colors', function () {
     var stderr
     before(function () {
-      var tracelib = require('./fixtures/trace-lib')
+      var tracelib = libs.trace
       function callold() { tracelib.old() }
       stderr = captureStderr(callold, true)
     })

@@ -1,5 +1,5 @@
 
-var deprecate = require('../..')('thing-lib')
+var deprecate = require('../../..')('thing-lib')
 
 exports.old = function () {
   deprecate('old')

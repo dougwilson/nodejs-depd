@@ -1,5 +1,5 @@
 
-var deprecate = require('../..')('my-lib')
+var deprecate = require('../../..')('my-lib')
 
 exports.fn = fn
 exports.prop = 'thingie'

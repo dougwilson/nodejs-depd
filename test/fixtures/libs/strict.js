@@ -1,7 +1,7 @@
 
 'use strict'
 
-var deprecate = require('../..')('strict-lib')
+var deprecate = require('../../..')('strict-lib')
 
 exports.old = function () {
   deprecate('old')
