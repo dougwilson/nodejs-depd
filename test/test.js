@@ -760,7 +760,7 @@ describe('node script.js', function () {
 function captureChildStderr(args, callback) {
   var chunks = []
   var env = {PATH: process.env.PATH}
-  var exec = process.argv[0]
+  var exec = process.execPath
   var proc = spawn(exec, args, {
     env: env
   })
