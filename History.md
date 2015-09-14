@@ -1,5 +1,5 @@
-unreleased
-==========
+1.1.0 / 2015-09-14
+==================
 
   * Enable strict mode in more places
   * Support io.js 3.x
