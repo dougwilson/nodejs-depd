@@ -276,6 +276,6 @@ deprecate.property(exports, 'oldprop', 'oldprop >= 0.10')
 [coveralls-image]: https://img.shields.io/coveralls/dougwilson/nodejs-depd/master.svg
 [coveralls-url]: https://coveralls.io/r/dougwilson/nodejs-depd?branch=master
 [node-image]: https://img.shields.io/node/v/depd.svg
-[node-url]: http://nodejs.org/download/
+[node-url]: https://nodejs.org/en/download/
 [gratipay-image]: https://img.shields.io/gratipay/dougwilson.svg
 [gratipay-url]: https://www.gratipay.com/dougwilson/
