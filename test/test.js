@@ -161,7 +161,7 @@ describe('deprecate(message)', function () {
       var stderr = captureStderr(callold)
       assert.ok(stderr.indexOf(basename(__filename)) !== -1)
       assert.ok(stderr.indexOf('deprecated') !== -1)
-      assert.ok(/ exports\.automsganon | <anonymous@[^:]+:[0-9]+:[0-9]+> /.test(stderr))
+      assert.ok(/ exports\.automsganon | <anonymous@[^\\\/]+[^:]+:[0-9]+:[0-9]+> /.test(stderr))
     })
 
     describe('in strict mode library', function () {
@@ -208,7 +208,7 @@ describe('deprecate(message)', function () {
         var stderr = captureStderr(callold)
         assert.ok(stderr.indexOf(basename(__filename)) !== -1)
         assert.ok(stderr.indexOf('deprecated') !== -1)
-        assert.ok(/ exports\.automsganon | <anonymous@[^:]+:[0-9]+:[0-9]+> /.test(stderr))
+        assert.ok(/ exports\.automsganon | <anonymous@[^\\\/]+[^:]+:[0-9]+:[0-9]+> /.test(stderr))
       })
     })
   })
@@ -359,7 +359,7 @@ describe('deprecate.function(fn, message)', function () {
       assert.ok(stderr.indexOf(basename(__filename)) !== -1)
       assert.ok(stderr.indexOf('deprecated') !== -1)
       assert.ok(stderr.indexOf(' fn ') !== -1)
-      assert.ok(/ at [^:]+test\.js:/.test(stderr))
+      assert.ok(/ at [^\\\/]+[^:]+test\.js:/.test(stderr))
     })
 
     it('should generate message for method call on anonymous function', function () {
@@ -367,8 +367,8 @@ describe('deprecate.function(fn, message)', function () {
       var stderr = captureStderr(callold)
       assert.ok(stderr.indexOf(basename(__filename)) !== -1)
       assert.ok(stderr.indexOf('deprecated') !== -1)
-      assert.ok(/ <anonymous@[^:]+my\.js:[0-9]+:[0-9]+> /.test(stderr))
-      assert.ok(/ at [^:]+test\.js:/.test(stderr))
+      assert.ok(/ <anonymous@[^\\\/]+[^:]+my\.js:[0-9]+:[0-9]+> /.test(stderr))
+      assert.ok(/ at [^\\\/]+[^:]+test\.js:/.test(stderr))
     })
 
     describe('in strict mode library', function () {
@@ -378,7 +378,7 @@ describe('deprecate.function(fn, message)', function () {
         assert.ok(stderr.indexOf(basename(__filename)) !== -1)
         assert.ok(stderr.indexOf('deprecated') !== -1)
         assert.ok(stderr.indexOf(' fn ') !== -1)
-        assert.ok(/ at [^:]+test\.js:/.test(stderr))
+        assert.ok(/ at [^\\\/]+[^:]+test\.js:/.test(stderr))
       })
 
       it('should generate message for method call on anonymous function', function () {
@@ -386,8 +386,8 @@ describe('deprecate.function(fn, message)', function () {
         var stderr = captureStderr(callold)
         assert.ok(stderr.indexOf(basename(__filename)) !== -1)
         assert.ok(stderr.indexOf('deprecated') !== -1)
-        assert.ok(/ <anonymous@[^:]+strict\.js:[0-9]+:[0-9]+> /.test(stderr))
-        assert.ok(/ at [^:]+test\.js:/.test(stderr))
+        assert.ok(/ <anonymous@[^\\\/]+[^:]+strict\.js:[0-9]+:[0-9]+> /.test(stderr))
+        assert.ok(/ at [^\\\/]+[^:]+test\.js:/.test(stderr))
       })
     })
   })
@@ -543,7 +543,7 @@ describe('deprecate.property(obj, prop, message)', function () {
       assert.ok(stderr.indexOf(basename(__filename)) !== -1)
       assert.ok(stderr.indexOf('deprecated') !== -1)
       assert.ok(stderr.indexOf(' propauto ') !== -1)
-      assert.ok(/ at [^:]+test\.js:/.test(stderr))
+      assert.ok(/ at [^\\\/]+[^:]+test\.js:/.test(stderr))
     })
 
     describe('in strict mode library', function () {
@@ -553,7 +553,7 @@ describe('deprecate.property(obj, prop, message)', function () {
         assert.ok(stderr.indexOf(basename(__filename)) !== -1)
         assert.ok(stderr.indexOf('deprecated') !== -1)
         assert.ok(stderr.indexOf(' propauto ') !== -1)
-        assert.ok(/ at [^:]+test\.js:/.test(stderr))
+        assert.ok(/ at [^\\\/]+[^:]+test\.js:/.test(stderr))
       })
     })
   })
