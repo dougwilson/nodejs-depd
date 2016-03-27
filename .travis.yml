@@ -10,6 +10,9 @@ node_js:
   - "4.4"
   - "5.9"
 sudo: false
+cache:
+  directories:
+    - node_modules
 before_install:
   # Remove all non-test dependencies
   - "npm rm --save-dev benchmark beautify-benchmark || true"
@@ -18,6 +21,10 @@ before_install:
   - "test $TRAVIS_NODE_VERSION != '0.6' || npm rm --save-dev istanbul"
   - "test $TRAVIS_NODE_VERSION != '0.8' || npm rm --save-dev istanbul"
   - "test $TRAVIS_NODE_VERSION = '0.6' -o $TRAVIS_NODE_VERSION = '0.8' || npm install browserify"
+
+  # Update Node.js modules
+  - "test ! -d node_modules || npm prune"
+  - "test ! -d node_modules || npm rebuild"
 script:
   # Run test script, depending on istanbul install
   - "test ! -z $(npm -ps ls istanbul) || npm test"
