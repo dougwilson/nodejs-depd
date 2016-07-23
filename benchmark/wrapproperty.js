@@ -11,7 +11,7 @@ var benchmarks = require('beautify-benchmark')
  */
 
 process.env.NO_DEPRECATION = 'my-lib'
-global.mylib = require('../test/fixtures/my-lib')
+global.mylib = require('../test/fixtures/libs/my')
 
 var suite = new benchmark.Suite
 
