@@ -11,7 +11,7 @@
   "repository": "dougwilson/nodejs-depd",
   "browser": "lib/browser/index.js",
   "devDependencies": {
-    "benchmark": "2.1.1",
+    "benchmark": "2.1.3",
     "beautify-benchmark": "0.2.4",
     "istanbul": "0.4.5",
     "mocha": "~1.21.5"
