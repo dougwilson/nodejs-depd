@@ -13,7 +13,7 @@ var benchmarks = require('beautify-benchmark')
 process.env.NO_DEPRECATION = 'my-lib'
 global.mylib = require('../test/fixtures/libs/my')
 
-var suite = new benchmark.Suite
+var suite = new benchmark.Suite()
 
 suite.add({
   name: 'function',
@@ -33,12 +33,12 @@ suite.add({
   fn: 'mylib.old()'
 })
 
-suite.on('cycle', function onCycle(event) {
-  benchmarks.add(event.target);
+suite.on('cycle', function onCycle (event) {
+  benchmarks.add(event.target)
 })
 
-suite.on('complete', function onComplete() {
-  benchmarks.log();
+suite.on('complete', function onComplete () {
+  benchmarks.log()
 })
 
 suite.run({async: false})

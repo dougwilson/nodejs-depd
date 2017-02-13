@@ -38,6 +38,7 @@ Object.defineProperty(exports, 'propgetter', {
   get: function () { return 'thingie' }
 })
 
+// eslint-disable-next-line accessor-pairs
 Object.defineProperty(exports, 'propsetter', {
   configurable: true,
   set: function () {}
@@ -54,7 +55,7 @@ exports.automsg = function () {
   deprecate()
 }
 
-exports.automsgnamed = function automsgnamed() {
+exports.automsgnamed = function automsgnamed () {
   deprecate()
 }
 
@@ -62,7 +63,7 @@ exports.automsganon = function () {
   (function () { deprecate() }())
 }
 
-exports.fnprop = function thefn() {}
+exports.fnprop = function thefn () {}
 exports.fnprop.propa = 'thingie'
 exports.fnprop.propautomsg = 'thingie'
 
@@ -77,6 +78,6 @@ exports.layerprop = function () {
   exports.propa
 }
 
-function fn(a1, a2) {
+function fn (a1, a2) {
   return a2
 }

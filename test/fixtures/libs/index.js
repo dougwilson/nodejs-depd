@@ -9,8 +9,8 @@ lazyRequireProperty(exports, 'old', './old')
 lazyRequireProperty(exports, 'thing', './thing')
 lazyRequireProperty(exports, 'trace', './trace')
 
-function lazyRequireProperty(obj, prop, path) {
-  function get() {
+function lazyRequireProperty (obj, prop, path) {
+  function get () {
     var val = require(path)
 
     Object.defineProperty(obj, prop, {

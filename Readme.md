@@ -27,6 +27,8 @@ track deprecations.
 
 ## API
 
+<!-- eslint-disable no-unused-vars -->
+
 ```js
 var deprecate = require('depd')('my-module')
 ```
@@ -200,7 +202,7 @@ var deprecate = require('depd')('my-cool-module')
 
 // message automatically derived from function name
 // Object.oldfunction
-exports.oldfunction = deprecate.function(function oldfunction() {
+exports.oldfunction = deprecate.function(function oldfunction () {
   // all calls to function are deprecated
 })
 
