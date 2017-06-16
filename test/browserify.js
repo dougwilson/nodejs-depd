@@ -104,7 +104,7 @@ run('when browserified', function () {
     })
 
     it('should not log on access to property', function () {
-      function callprop () { mylib.propa }
+      function callprop () { return mylib.propa }
       assert.equal(captureStderr(callprop), '')
     })
 
@@ -119,26 +119,26 @@ run('when browserified', function () {
 
     describe('when obj is a function', function () {
       it('should not log on access to property on function', function () {
-        function callprop () { mylib.fnprop.propa }
+        function callprop () { return mylib.fnprop.propa }
         assert.equal(captureStderr(callprop), '')
       })
 
       it('should not generate message on named function', function () {
-        function callprop () { mylib.fnprop.propautomsg }
+        function callprop () { return mylib.fnprop.propautomsg }
         assert.equal(captureStderr(callprop), '')
       })
     })
 
     describe('when value descriptor', function () {
       it('should not log on access and set', function () {
-        function callold () { mylib.propa }
+        function callold () { return mylib.propa }
         function setold () { mylib.propa = 'val' }
         assert.equal(captureStderr(callold), '')
         assert.equal(captureStderr(setold), '')
       })
 
       it('should not log on set to non-writable', function () {
-        function callold () { mylib.propget }
+        function callold () { return mylib.propget }
         function setold () { mylib.propget = 'val' }
         assert.equal(captureStderr(callold), '')
         assert.equal(captureStderr(setold), '')
@@ -147,14 +147,14 @@ run('when browserified', function () {
 
     describe('when accessor descriptor', function () {
       it('should log on access and set', function () {
-        function callold () { mylib.propdyn }
+        function callold () { return mylib.propdyn }
         function setold () { mylib.propdyn = 'val' }
         assert.equal(captureStderr(callold), '')
         assert.equal(captureStderr(setold), '')
       })
 
       it('should not log on access when no accessor', function () {
-        function callold () { mylib.propsetter }
+        function callold () { return mylib.propsetter }
         assert.equal(captureStderr(callold), '')
       })
 
@@ -166,7 +166,7 @@ run('when browserified', function () {
 
     describe('when message omitted', function () {
       it('should not generate message for method call on named function', function () {
-        function callold () { mylib.propauto }
+        function callold () { return mylib.propauto }
         assert.equal(captureStderr(callold), '')
       })
     })

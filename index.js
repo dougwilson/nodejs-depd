@@ -240,8 +240,6 @@ function log (message, site) {
     : formatPlain
   var msg = format.call(this, message, caller, stack.slice(i))
   process.stderr.write(msg + '\n', 'utf8')
-
-  return
 }
 
 /**

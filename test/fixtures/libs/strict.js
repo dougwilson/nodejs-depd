@@ -43,7 +43,7 @@ exports.layerfn = function () {
 }
 
 exports.layerprop = function () {
-  exports.propa
+  return exports.propa
 }
 
 function fn (a1, a2) {

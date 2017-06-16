@@ -413,7 +413,7 @@ describe('deprecate.property(obj, prop, message)', function () {
   })
 
   it('should log on access to property', function () {
-    function callprop () { mylib.propa }
+    function callprop () { return mylib.propa }
     var stderr = captureStderr(callprop)
     assert.ok(stderr.indexOf(' deprecated ') !== -1)
     assert.ok(stderr.indexOf(' propa gone ') !== -1)
@@ -433,7 +433,7 @@ describe('deprecate.property(obj, prop, message)', function () {
   it('should only warn once per call site', function () {
     function callold () {
       for (var i = 0; i < 5; i++) {
-        mylib.propa // single call site
+        var v = mylib.propa || v // single call site
         process.stderr.write('access ' + i + '\n')
       }
     }
@@ -445,7 +445,7 @@ describe('deprecate.property(obj, prop, message)', function () {
 
   it('should warn for different accesses on same line', function () {
     function callold () {
-      mylib.propa; mylib.propa
+      return [mylib.propa, mylib.propa]
     }
 
     var stderr = captureStderr(callold)
@@ -471,14 +471,14 @@ describe('deprecate.property(obj, prop, message)', function () {
 
   describe('when obj is a function', function () {
     it('should log on access to property on function', function () {
-      function callprop () { mylib.fnprop.propa }
+      function callprop () { return mylib.fnprop.propa }
       var stderr = captureStderr(callprop)
       assert.ok(stderr.indexOf(' deprecated ') !== -1)
       assert.ok(stderr.indexOf(' fn propa gone ') !== -1)
     })
 
     it('should generate message on named function', function () {
-      function callprop () { mylib.fnprop.propautomsg }
+      function callprop () { return mylib.fnprop.propautomsg }
       var stderr = captureStderr(callprop)
       assert.ok(stderr.indexOf(' deprecated ') !== -1)
       assert.ok(stderr.indexOf(' thefn.propautomsg ') !== -1)
@@ -486,14 +486,14 @@ describe('deprecate.property(obj, prop, message)', function () {
 
     describe('in strict mode library', function () {
       it('should log on access to property on function', function () {
-        function callprop () { strictlib.fnprop.propa }
+        function callprop () { return strictlib.fnprop.propa }
         var stderr = captureStderr(callprop)
         assert.ok(stderr.indexOf(' deprecated ') !== -1)
         assert.ok(stderr.indexOf(' fn propa gone ') !== -1)
       })
 
       it('should generate message on named function', function () {
-        function callprop () { strictlib.fnprop.propautomsg }
+        function callprop () { return strictlib.fnprop.propautomsg }
         var stderr = captureStderr(callprop)
         assert.ok(stderr.indexOf(' deprecated ') !== -1)
         assert.ok(stderr.indexOf(' thefn.propautomsg ') !== -1)
@@ -503,14 +503,14 @@ describe('deprecate.property(obj, prop, message)', function () {
 
   describe('when value descriptor', function () {
     it('should log on access and set', function () {
-      function callold () { mylib.propa }
+      function callold () { return mylib.propa }
       function setold () { mylib.propa = 'val' }
       assert.ok(captureStderr(callold).indexOf(' deprecated ') !== -1)
       assert.ok(captureStderr(setold).indexOf(' deprecated ') !== -1)
     })
 
     it('should not log on set to non-writable', function () {
-      function callold () { mylib.propget }
+      function callold () { return mylib.propget }
       function setold () { mylib.propget = 'val' }
       assert.ok(captureStderr(callold).indexOf(' deprecated ') !== -1)
       assert.equal(captureStderr(setold), '')
@@ -519,14 +519,14 @@ describe('deprecate.property(obj, prop, message)', function () {
 
   describe('when accessor descriptor', function () {
     it('should log on access and set', function () {
-      function callold () { mylib.propdyn }
+      function callold () { return mylib.propdyn }
       function setold () { mylib.propdyn = 'val' }
       assert.ok(captureStderr(callold).indexOf(' deprecated ') !== -1)
       assert.ok(captureStderr(setold).indexOf(' deprecated ') !== -1)
     })
 
     it('should not log on access when no accessor', function () {
-      function callold () { mylib.propsetter }
+      function callold () { return mylib.propsetter }
       assert.equal(captureStderr(callold), '')
     })
 
@@ -538,7 +538,7 @@ describe('deprecate.property(obj, prop, message)', function () {
 
   describe('when message omitted', function () {
     it('should generate message for method call on named function', function () {
-      function callold () { mylib.propauto }
+      function callold () { return mylib.propauto }
       var stderr = captureStderr(callold)
       assert.ok(stderr.indexOf(basename(__filename)) !== -1)
       assert.ok(stderr.indexOf('deprecated') !== -1)
@@ -548,7 +548,7 @@ describe('deprecate.property(obj, prop, message)', function () {
 
     describe('in strict mode library', function () {
       it('should generate message for method call on named function', function () {
-        function callold () { strictlib.propauto }
+        function callold () { return strictlib.propauto }
         var stderr = captureStderr(callold)
         assert.ok(stderr.indexOf(basename(__filename)) !== -1)
         assert.ok(stderr.indexOf('deprecated') !== -1)
