@@ -446,7 +446,7 @@ describe('deprecate.property(obj, prop, message)', function () {
 
   it('should warn for different accesses on same line', function () {
     function callold () {
-      return [mylib.propa, mylib.propa]
+      mylib.old(); mylib.old()
     }
 
     var stderr = captureStderr(callold)
