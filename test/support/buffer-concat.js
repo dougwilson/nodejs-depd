@@ -7,13 +7,22 @@
 'use strict'
 
 /**
- * Module exports.
+ * Module dependencies.
+ * @private
  */
 
-module.exports = bufferConcat
+var Buffer = require('buffer').Buffer
+
+/**
+ * Module exports.
+ * @public
+ */
+
+module.exports = Buffer.concat || bufferConcat
 
 /**
  * Concatenate an array of Buffers.
+ * @public
  */
 
 function bufferConcat (bufs) {

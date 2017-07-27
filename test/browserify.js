@@ -1,7 +1,7 @@
 
 var assert = require('assert')
 var browserify = tryRequire('browserify')
-var bufferConcat = require('../lib/compat').bufferConcat
+var bufferConcat = require('./support/buffer-concat')
 var depd = null
 var mylib = null
 var path = require('path')

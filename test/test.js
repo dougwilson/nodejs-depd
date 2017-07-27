@@ -1,7 +1,7 @@
 
 var assert = require('assert')
 var basename = require('path').basename
-var bufferConcat = require('../lib/compat').bufferConcat
+var bufferConcat = require('./support/buffer-concat')
 var depd = require('..')
 var libs = require('./fixtures/libs')
 var mylib = libs.my
