@@ -1,7 +1,7 @@
 
 var assert = require('assert')
 var browserify = tryRequire('browserify')
-var bufferConcat = require('./support/buffer-concat')
+var captureStderr = require('./support/capture-stderr')
 var depd = null
 var mylib = null
 var path = require('path')
@@ -172,26 +172,6 @@ run('when browserified', function () {
     })
   })
 })
-
-function captureStderr (fn, color) {
-  var chunks = []
-  var isTTY = process.stderr.isTTY
-  var write = process.stderr.write
-
-  process.stderr.isTTY = Boolean(color)
-  process.stderr.write = function write (chunk, encoding) {
-    chunks.push(new Buffer(chunk, encoding))
-  }
-
-  try {
-    fn()
-  } finally {
-    process.stderr.isTTY = isTTY
-    process.stderr.write = write
-  }
-
-  return bufferConcat(chunks).toString('utf8')
-}
 
 function tryRequire (name) {
   try {
