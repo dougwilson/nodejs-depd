@@ -1,7 +1,8 @@
-unreleased
-==========
+1.1.1 / 2017-07-27
+==================
 
   * Remove unnecessary `Buffer` loading
+  * Support Node.js 0.6 to 8.x
 
 1.1.0 / 2015-09-14
 ==================
