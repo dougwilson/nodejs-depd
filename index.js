@@ -404,12 +404,11 @@ function wrapfunction (fn, message) {
 
   site.name = fn.name
 
-   // eslint-disable-next-line no-eval
-  var deprecatedfn = eval('(function (' + args + ') {\n' +
-    '"use strict"\n' +
-    'log.call(deprecate, message, site)\n' +
-    'return fn.apply(this, arguments)\n' +
-    '})')
+  var deprecatedfn = (function () {
+    'use strict';
+    log.call(deprecate, message, site);
+    return fn.apply(this, arguments);
+  })(args);
 
   return deprecatedfn
 }
