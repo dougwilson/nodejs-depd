@@ -391,6 +391,76 @@ function prepareObjectStackTrace (obj, stack) {
 /**
  * Return a wrapped function in a deprecation message.
  */
+function createDeprecatedFn(fn, deprecate, message, site) {
+  switch(fn.length) {
+    case 0:
+      return function () {
+        'use strict';
+        log.call(deprecate, message, site);
+        return fn.apply(this, arguments);
+      };
+    case 1:
+      return function (arg0) {
+        'use strict';
+        log.call(deprecate, message, site);
+        return fn.apply(this, arguments);
+      };
+    case 2:
+      return function (arg0, arg1) {
+        'use strict';
+        log.call(deprecate, message, site);
+        return fn.apply(this, arguments);
+      };
+    case 3:
+      return function (arg0, arg1, arg2) {
+        'use strict';
+        log.call(deprecate, message, site);
+        return fn.apply(this, arguments);
+      };
+    case 4:
+      return function (arg0, arg1, arg2, arg3) {
+        'use strict';
+        log.call(deprecate, message, site);
+        return fn.apply(this, arguments);
+      };
+    case 5:
+      return function (arg0, arg1, arg2, arg3, arg4) {
+        'use strict';
+        log.call(deprecate, message, site);
+        return fn.apply(this, arguments);
+      };
+    case 6:
+      return function (arg0, arg1, arg2, arg3, arg4, arg5) {
+        'use strict';
+        log.call(deprecate, message, site);
+        return fn.apply(this, arguments);
+      };
+    case 7:
+      return function (arg0, arg1, arg2, arg3, arg4, arg5, arg6) {
+        'use strict';
+        log.call(deprecate, message, site);
+        return fn.apply(this, arguments);
+      };
+    case 8:
+      return function (arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7) {
+        'use strict';
+        log.call(deprecate, message, site);
+        return fn.apply(this, arguments);
+      };
+    case 9:
+      return function (arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8) {
+        'use strict';
+        log.call(deprecate, message, site);
+        return fn.apply(this, arguments);
+      };
+    case 10:
+      return function (arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9) {
+        'use strict';
+        log.call(deprecate, message, site);
+        return fn.apply(this, arguments);
+      };
+  }
+}
 
 function wrapfunction (fn, message) {
   if (typeof fn !== 'function') {
@@ -403,12 +473,7 @@ function wrapfunction (fn, message) {
   var site = callSiteLocation(stack[1])
 
   site.name = fn.name
-
-  var deprecatedfn = (function () {
-    'use strict';
-    log.call(deprecate, message, site);
-    return fn.apply(this, arguments);
-  })(args);
+  var deprecatedfn = createDeprecatedFn(fn, deprecate, message, site);
 
   return deprecatedfn
 }
