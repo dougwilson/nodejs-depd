@@ -11,6 +11,7 @@
 var callSiteToString = require('./lib/compat').callSiteToString
 var eventListenerCount = require('./lib/compat').eventListenerCount
 var relative = require('path').relative
+var runInNewContext = require('vm').runInNewContext
 
 /**
  * Module exports.
@@ -404,12 +405,19 @@ function wrapfunction (fn, message) {
 
   site.name = fn.name
 
-   // eslint-disable-next-line no-eval
-  var deprecatedfn = eval('(function (' + args + ') {\n' +
+  // replace eval with vm.runInNewContext
+  var deprecatedfn = runInNewContext('(function (' + args + ') {\n' +
     '"use strict"\n' +
     'log.call(deprecate, message, site)\n' +
     'return fn.apply(this, arguments)\n' +
-    '})')
+    '})', {
+      // sandbox
+      log,
+      deprecate,
+      message,
+      site,
+      fn
+    })
 
   return deprecatedfn
 }
