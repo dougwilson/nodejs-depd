@@ -412,11 +412,11 @@ function wrapfunction (fn, message) {
     'return fn.apply(this, arguments)\n' +
     '})', {
       // sandbox
-      log,
-      deprecate,
-      message,
-      site,
-      fn
+      log: log,
+      deprecate: deprecate,
+      message: message,
+      site: site,
+      fn: fn
     })
 
   return deprecatedfn
