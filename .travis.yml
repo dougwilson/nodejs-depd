@@ -13,6 +13,7 @@ node_js:
   - "7.10"
   - "8.1"
 sudo: false
+dist: precise
 cache:
   directories:
     - node_modules
