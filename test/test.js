@@ -722,7 +722,6 @@ describe('node script.js', function () {
     captureChildStderr([script], function (err, stderr) {
       if (err) return done(err)
       var filename = path.relative(process.cwd(), script)
-      stderr = stderr.replace(/\w+, \d+ \w+ \d+ \d+:\d+:\d+ \w+/, '__timestamp__')
       assert.equal(stderr, '__timestamp__ my-cool-module deprecated oldfunction at ' + filename + ':7:10\n')
       done()
     })
@@ -750,7 +749,6 @@ describe('node script.js', function () {
     it('should suppress deprecation message', function (done) {
       captureChildStderr(['--trace-deprecation', script], function (err, stderr) {
         if (err) return done(err)
-        stderr = stderr.replace(/\w+, \d+ \w+ \d+ \d+:\d+:\d+ \w+/, '__timestamp__')
         assert.ok(stderr.indexOf('__timestamp__ my-cool-module deprecated oldfunction\n    at run (' + script + ':7:10)\n    at') === 0)
         done()
       })
@@ -773,7 +771,9 @@ function captureChildStderr (args, callback) {
 
   proc.on('error', callback)
   proc.on('exit', function () {
-    var stderr = bufferConcat(chunks).toString('utf8')
+    var stderr = bufferConcat(chunks)
+      .toString('utf8')
+      .replace(/\w+, \d+ \w+ \d+ \d+:\d+:\d+ \w+/, '__timestamp__')
     callback(null, stderr)
   })
 }
