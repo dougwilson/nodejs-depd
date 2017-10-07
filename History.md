@@ -1,3 +1,8 @@
+unreleased
+==========
+
+  * perf: remove argument reassignment
+
 1.1.1 / 2017-07-27
 ==================
 
