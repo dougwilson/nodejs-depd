@@ -2,6 +2,7 @@
 ===
 
   * Drop support for Node.js 0.6
+  * Replace interal `eval` usage with `Function` constructor
 
 1.1.2 / 2018-01-11
 ==================
