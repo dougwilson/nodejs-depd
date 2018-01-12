@@ -1,6 +1,6 @@
 /*!
  * depd
- * Copyright(c) 2014-2017 Douglas Christopher Wilson
+ * Copyright(c) 2014-2018 Douglas Christopher Wilson
  * MIT Licensed
  */
 
@@ -8,7 +8,6 @@
  * Module dependencies.
  */
 
-var callSiteToString = require('./lib/compat').callSiteToString
 var eventListenerCount = require('./lib/compat').eventListenerCount
 var relative = require('path').relative
 
@@ -92,7 +91,7 @@ function createStackString (stack) {
   }
 
   for (var i = 0; i < stack.length; i++) {
-    str += '\n    at ' + callSiteToString(stack[i])
+    str += '\n    at ' + stack[i].toString()
   }
 
   return str
@@ -310,7 +309,7 @@ function formatPlain (msg, caller, stack) {
   // add stack trace
   if (this._traced) {
     for (var i = 0; i < stack.length; i++) {
-      formatted += '\n    at ' + callSiteToString(stack[i])
+      formatted += '\n    at ' + stack[i].toString()
     }
 
     return formatted
@@ -335,7 +334,7 @@ function formatColor (msg, caller, stack) {
   // add stack trace
   if (this._traced) {
     for (var i = 0; i < stack.length; i++) {
-      formatted += '\n    \x1b[36mat ' + callSiteToString(stack[i]) + '\x1b[39m' // cyan
+      formatted += '\n    \x1b[36mat ' + stack[i].toString() + '\x1b[39m' // cyan
     }
 
     return formatted
