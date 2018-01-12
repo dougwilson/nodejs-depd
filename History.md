@@ -1,5 +1,5 @@
-unreleased
-==========
+1.1.2 / 2018-01-11
+==================
 
   * perf: remove argument reassignment
   * Support Node.js 0.6 to 9.x
