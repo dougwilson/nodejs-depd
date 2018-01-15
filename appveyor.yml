@@ -18,6 +18,7 @@ install:
   - ps: Install-Product node $env:nodejs_version
   - npm config set shrinkwrap false
   - npm rm --save-dev benchmark beautify-benchmark & ver > nul
+  - if "%nodejs_version%" equ "0.8" npm config set strict-ssl false
   - if "%nodejs_version%" equ "0.8" npm rm --save-dev istanbul
   - npm rm --save-dev eslint eslint-config-standard eslint-plugin-markdown eslint-plugin-promise eslint-plugin-standard
   - if exist node_modules npm prune
