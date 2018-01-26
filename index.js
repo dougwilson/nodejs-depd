@@ -424,6 +424,7 @@ function wrapfunction (fn, message) {
     // If that fails, we use eval to manually construct a function with
     // the correct arity.
     var args = createArgumentsString(fn.length)
+    // eslint-disable-next-line no-new-func
     deprecatedfn = new Function('fn', 'log', 'deprecate', 'message', 'site',
       '"use strict"\n' +
       'return function (' + args + ') {' +
