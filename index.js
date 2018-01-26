@@ -405,7 +405,7 @@ function wrapfunction (fn, message) {
   site.name = fn.name
 
   var deprecatedfn
-  
+
   try {
     // Node.js 3.3+ allows us to redefine a function's length property.
     // We use this ability to preserve fn's arity without eval.
