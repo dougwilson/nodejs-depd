@@ -66,6 +66,20 @@ function convertDataDescriptorToAccessor (obj, prop, message) {
 }
 
 /**
+ * Create arguments string to keep arity.
+ */
+
+function createArgumentsString (arity) {
+  var str = ''
+
+  for (var i = 0; i < arity; i++) {
+    str += ', arg' + i
+  }
+
+  return str.substr(2)
+}
+
+/**
  * Create stack string from stack.
  */
 
@@ -390,18 +404,33 @@ function wrapfunction (fn, message) {
 
   site.name = fn.name
 
-  var deprecatedfn = function () {
-    log.call(deprecate, message, site)
-    return fn.apply(this, arguments)
-  }
+  var deprecatedfn
+  
+  try {
+    // Node.js 3.3+ allows us to redefine a function's length property.
+    // We use this ability to preserve fn's arity without eval.
+    deprecatedfn = function () {
+      log.call(deprecate, message, site)
+      return fn.apply(this, arguments)
+    }
 
-  // Preserve fn's arity.
-  Object.defineProperty(deprecatedfn, 'length', {
-    configurable: true,
-    enumerable: false,
-    value: fn.length,
-    writable: false
-  })
+    Object.defineProperty(deprecatedfn, 'length', {
+      configurable: true,
+      enumerable: false,
+      value: fn.length,
+      writable: false
+    })
+  } catch (e) {
+    // If that fails, we use eval to manually construct a function with
+    // the correct arity.
+    var args = createArgumentsString(fn.length)
+    deprecatedfn = new Function('fn', 'log', 'deprecate', 'message', 'site',
+      '"use strict"\n' +
+      'return function (' + args + ') {' +
+      'log.call(deprecate, message, site)\n' +
+      'return fn.apply(this, arguments)\n' +
+      '}')(fn, log, deprecate, message, site)
+  }
 
   return deprecatedfn
 }
