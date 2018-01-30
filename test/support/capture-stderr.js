@@ -7,13 +7,6 @@
 'use strict'
 
 /**
- * Module dependencies.
- * @private
- */
-
-var bufferConcat = require('./buffer-concat')
-
-/**
  * Module exports.
  * @public
  */
@@ -42,5 +35,5 @@ function captureStderr (fn, color) {
     process.stderr.write = write
   }
 
-  return bufferConcat(chunks).toString('utf8')
+  return Buffer.concat(chunks).toString('utf8')
 }

@@ -1,7 +1,6 @@
 
 var assert = require('assert')
 var basename = require('path').basename
-var bufferConcat = require('./support/buffer-concat')
 var captureStderr = require('./support/capture-stderr')
 var depd = require('..')
 var libs = require('./fixtures/libs')
@@ -771,7 +770,7 @@ function captureChildStderr (args, callback) {
 
   proc.on('error', callback)
   proc.on('exit', function () {
-    var stderr = bufferConcat(chunks)
+    var stderr = Buffer.concat(chunks)
       .toString('utf8')
       .replace(/\w+, \d+ \w+ \d+ \d+:\d+:\d+ \w+/, '__timestamp__')
     callback(null, stderr)
