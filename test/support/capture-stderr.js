@@ -7,6 +7,13 @@
 'use strict'
 
 /**
+ * Module dependencies.
+ * @private
+ */
+
+var Buffer = require('safe-buffer').Buffer
+
+/**
  * Module exports.
  * @public
  */
@@ -25,7 +32,7 @@ function captureStderr (fn, color) {
 
   process.stderr.isTTY = Boolean(color)
   process.stderr.write = function write (chunk, encoding) {
-    chunks.push(new Buffer(chunk, encoding))
+    chunks.push(Buffer.from(chunk, encoding))
   }
 
   try {
