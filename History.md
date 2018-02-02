@@ -3,6 +3,7 @@
 
   * Drop support for Node.js 0.6
   * Replace interal `eval` usage with `Function` constructor
+  * Use instance methods on `process` to check for listeners
 
 1.1.2 / 2018-01-11
 ==================

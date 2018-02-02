@@ -8,7 +8,6 @@
  * Module dependencies.
  */
 
-var eventListenerCount = require('./lib/compat').eventListenerCount
 var relative = require('path').relative
 
 /**
@@ -128,6 +127,26 @@ function depd (namespace) {
 }
 
 /**
+ * Determine if event emitter has listeners of a given type.
+ *
+ * The way to do this check is done three different ways in Node.js >= 0.8
+ * so this consolidates them into a minimal set using instance methods.
+ *
+ * @param {EventEmitter} emitter
+ * @param {string} type
+ * @returns {boolean}
+ * @private
+ */
+
+function eehaslisteners (emitter, type) {
+  var count = typeof emitter.listenerCount !== 'function'
+    ? emitter.listeners(type).length
+    : emitter.listenerCount(type)
+
+  return count > 0
+}
+
+/**
  * Determine if namespace is ignored.
  */
 
@@ -166,7 +185,7 @@ function istraced (namespace) {
  */
 
 function log (message, site) {
-  var haslisteners = eventListenerCount(process, 'deprecation') !== 0
+  var haslisteners = eehaslisteners(process, 'deprecation')
 
   // abort early if no destination
   if (!haslisteners && this._ignored) {
