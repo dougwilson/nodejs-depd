@@ -32,7 +32,7 @@ run('when browserified', function () {
 
   describe('depd(namespace)', function () {
     it('creates deprecated function', function () {
-      assert.equal(typeof depd('test'), 'function')
+      assert.strictEqual(typeof depd('test'), 'function')
     })
 
     it('requires namespace', function () {
@@ -43,13 +43,13 @@ run('when browserified', function () {
   describe('deprecate(message)', function () {
     it('should not log message', function () {
       function callold () { mylib.old() }
-      assert.equal(captureStderr(callold), '')
+      assert.strictEqual(captureStderr(callold), '')
     })
 
     describe('when message omitted', function () {
       it('should not log message', function () {
         function callold () { mylib.automsgnamed() }
-        assert.equal(captureStderr(callold), '')
+        assert.strictEqual(captureStderr(callold), '')
       })
     })
   })
@@ -62,24 +62,24 @@ run('when browserified', function () {
 
     it('should not log on call to function', function () {
       function callold () { mylib.oldfn() }
-      assert.equal(captureStderr(callold), '')
+      assert.strictEqual(captureStderr(callold), '')
     })
 
     it('should have same arity', function () {
-      assert.equal(mylib.oldfn.length, 2)
+      assert.strictEqual(mylib.oldfn.length, 2)
     })
 
     it('should pass arguments', function () {
       var ret
       function callold () { ret = mylib.oldfn(1, 2) }
-      assert.equal(captureStderr(callold), '')
-      assert.equal(ret, 2)
+      assert.strictEqual(captureStderr(callold), '')
+      assert.strictEqual(ret, 2)
     })
 
     describe('when message omitted', function () {
       it('should not log message', function () {
         function callold () { mylib.oldfnauto() }
-        assert.equal(captureStderr(callold), '')
+        assert.strictEqual(captureStderr(callold), '')
       })
     })
   })
@@ -105,27 +105,27 @@ run('when browserified', function () {
 
     it('should not log on access to property', function () {
       function callprop () { return mylib.propa }
-      assert.equal(captureStderr(callprop), '')
+      assert.strictEqual(captureStderr(callprop), '')
     })
 
     it('should not log on setting property', function () {
       var val
       function callprop () { val = mylib.propa }
       function setprop () { mylib.propa = 'newval' }
-      assert.equal(captureStderr(setprop), '')
-      assert.equal(captureStderr(callprop), '')
-      assert.equal(val, 'newval')
+      assert.strictEqual(captureStderr(setprop), '')
+      assert.strictEqual(captureStderr(callprop), '')
+      assert.strictEqual(val, 'newval')
     })
 
     describe('when obj is a function', function () {
       it('should not log on access to property on function', function () {
         function callprop () { return mylib.fnprop.propa }
-        assert.equal(captureStderr(callprop), '')
+        assert.strictEqual(captureStderr(callprop), '')
       })
 
       it('should not generate message on named function', function () {
         function callprop () { return mylib.fnprop.propautomsg }
-        assert.equal(captureStderr(callprop), '')
+        assert.strictEqual(captureStderr(callprop), '')
       })
     })
 
@@ -133,15 +133,15 @@ run('when browserified', function () {
       it('should not log on access and set', function () {
         function callold () { return mylib.propa }
         function setold () { mylib.propa = 'val' }
-        assert.equal(captureStderr(callold), '')
-        assert.equal(captureStderr(setold), '')
+        assert.strictEqual(captureStderr(callold), '')
+        assert.strictEqual(captureStderr(setold), '')
       })
 
       it('should not log on set to non-writable', function () {
         function callold () { return mylib.propget }
         function setold () { mylib.propget = 'val' }
-        assert.equal(captureStderr(callold), '')
-        assert.equal(captureStderr(setold), '')
+        assert.strictEqual(captureStderr(callold), '')
+        assert.strictEqual(captureStderr(setold), '')
       })
     })
 
@@ -149,25 +149,25 @@ run('when browserified', function () {
       it('should log on access and set', function () {
         function callold () { return mylib.propdyn }
         function setold () { mylib.propdyn = 'val' }
-        assert.equal(captureStderr(callold), '')
-        assert.equal(captureStderr(setold), '')
+        assert.strictEqual(captureStderr(callold), '')
+        assert.strictEqual(captureStderr(setold), '')
       })
 
       it('should not log on access when no accessor', function () {
         function callold () { return mylib.propsetter }
-        assert.equal(captureStderr(callold), '')
+        assert.strictEqual(captureStderr(callold), '')
       })
 
       it('should not log on set when no setter', function () {
         function callold () { mylib.propgetter = 'val' }
-        assert.equal(captureStderr(callold), '')
+        assert.strictEqual(captureStderr(callold), '')
       })
     })
 
     describe('when message omitted', function () {
       it('should not generate message for method call on named function', function () {
         function callold () { return mylib.propauto }
-        assert.equal(captureStderr(callold), '')
+        assert.strictEqual(captureStderr(callold), '')
       })
     })
   })
