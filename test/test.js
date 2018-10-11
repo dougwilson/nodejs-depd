@@ -408,7 +408,7 @@ describe('deprecate.property(obj, prop, message)', function () {
   it('should throw when given non-configurable property', function () {
     var deprecate = depd('test')
     var obj = {}
-    Object.defineProperty(obj, 'thing', {value: 'thingie'})
+    Object.defineProperty(obj, 'thing', { value: 'thingie' })
     assert.throws(deprecate.property.bind(deprecate, obj, 'thing'), /property.*configurable/)
   })
 
@@ -757,7 +757,7 @@ describe('node script.js', function () {
 
 function captureChildStderr (args, callback) {
   var chunks = []
-  var env = {PATH: process.env.PATH}
+  var env = { PATH: process.env.PATH }
   var exec = process.execPath
   var proc = spawn(exec, args, {
     env: env

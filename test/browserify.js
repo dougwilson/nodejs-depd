@@ -99,7 +99,7 @@ run('when browserified', function () {
     it('should throw when given non-configurable property', function () {
       var deprecate = depd('test')
       var obj = {}
-      Object.defineProperty(obj, 'thing', {value: 'thingie'})
+      Object.defineProperty(obj, 'thing', { value: 'thingie' })
       assert.throws(deprecate.property.bind(deprecate, obj, 'thing'), /property.*configurable/)
     })
 
