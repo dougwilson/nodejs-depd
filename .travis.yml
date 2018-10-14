@@ -18,23 +18,59 @@ cache:
   directories:
     - node_modules
 before_install:
-  # Skip updating shrinkwrap / lock
-  - "npm config set shrinkwrap false"
-
+  # Configure npm
+  - |
+    # Skip updating shrinkwrap / lock
+    npm config set shrinkwrap false
   # Remove all non-test dependencies
-  - "npm rm --save-dev benchmark beautify-benchmark || true"
-
+  - |
+    # Remove benchmark dependencies
+    npm rm --silent --save-dev benchmark beautify-benchmark
   # Setup Node.js version-specific dependencies
-  - "test $TRAVIS_NODE_VERSION != '0.8' || npm rm --save-dev istanbul"
-  - "test $TRAVIS_NODE_VERSION = '0.8' || npm install browserify"
-  - "test $(echo $TRAVIS_NODE_VERSION | cut -d. -f1) -ge 6 || npm rm --save-dev $(grep -E '\"eslint\\S*\"' package.json | cut -d'\"' -f2)"
-
+  - |
+    # istanbul for coverage
+    # - remove for Node.js < 0.10
+    if [[ "$(cut -d. -f1 <<< "$TRAVIS_NODE_VERSION")" -eq 0 && "$(cut -d. -f2 <<< "$TRAVIS_NODE_VERSION")" -lt 10 ]]; then
+      npm rm --silent --save-dev istanbul
+    fi
+  - |
+    # browserify for browser testing
+    # - install for Node.js > 0.8
+    if [[ "$(cut -d. -f1 <<< "$TRAVIS_NODE_VERSION")" -gt 0 || "$(cut -d. -f2 <<< "$TRAVIS_NODE_VERSION")" -gt 8 ]]; then
+      npm install --silent --save-dev browserify
+    fi
+  - |
+    # eslint for linting
+    # - remove on Node.js < 6
+    if [[ "$(cut -d. -f1 <<< "$TRAVIS_NODE_VERSION")" -lt 6 ]]; then
+      node -pe 'Object.keys(require("./package").devDependencies).join("\n")' | \
+        grep -E '^eslint(-|$)' | \
+        xargs npm rm --save-dev
+    fi
   # Update Node.js modules
-  - "test ! -d node_modules || npm prune"
-  - "test ! -d node_modules || npm rebuild"
+  - |
+    # Prune and rebuild node_modules
+    if [[ -d node_modules ]]; then
+      npm prune
+      npm rebuild
+    fi
 script:
-  # Run test script, depending on istanbul install
-  - "test ! -z $(npm -ps ls istanbul) || npm test"
-  - "test   -z $(npm -ps ls istanbul) || npm run-script test-ci"
-  - "test   -z $(npm -ps ls eslint  ) || npm run-script lint"
-after_script: "npm install coveralls@2.10.0 && cat ./coverage/lcov.info | coveralls"
+  # Run test script
+  - |
+    if npm -ps ls istanbul | grep -q istanbul; then
+      npm run test-ci
+    else
+      npm test
+    fi
+  # Run linting
+  - |
+    if npm -ps ls eslint | grep -q eslint; then
+      npm run lint
+    fi
+after_script:
+  - |
+    # Upload coverage to coveralls
+    if [[ -f ./coverage/lcov.info ]]; then
+      npm install --save-dev coveralls@2.10.0
+      coveralls < ./coverage/lcov.info
+    fi
