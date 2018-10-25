@@ -9,6 +9,7 @@ var path = require('path')
 var script = path.join(__dirname, 'fixtures', 'script.js')
 var spawn = require('child_process').spawn
 var strictlib = libs.strict
+var uid = require('uid-safe').sync
 
 describe('depd(namespace)', function () {
   it('creates deprecated function', function () {
@@ -718,7 +719,7 @@ describe('process.env.TRACE_DEPRECATION', function () {
 
 describe('node script.js', function () {
   it('should display deprecation message', function (done) {
-    captureChildStderr([script], function (err, stderr) {
+    captureChildStderr(script, [], function (err, stderr) {
       if (err) return done(err)
       var filename = path.relative(process.cwd(), script)
       assert.strictEqual(stderr, '__timestamp__ my-cool-module deprecated oldfunction at ' + filename + ':7:10\n')
@@ -736,7 +737,7 @@ describe('node script.js', function () {
 
   describe('node --no-deprecation script.js', function () {
     it('should suppress deprecation message', function (done) {
-      captureChildStderr(['--no-deprecation', script], function (err, stderr) {
+      captureChildStderr(script, ['--no-deprecation'], function (err, stderr) {
         if (err) return done(err)
         assert.strictEqual(stderr, '')
         done()
@@ -746,7 +747,7 @@ describe('node script.js', function () {
 
   describe('node --trace-deprecation script.js', function () {
     it('should suppress deprecation message', function (done) {
-      captureChildStderr(['--trace-deprecation', script], function (err, stderr) {
+      captureChildStderr(script, ['--trace-deprecation'], function (err, stderr) {
         if (err) return done(err)
         assert.ok(stderr.indexOf('__timestamp__ my-cool-module deprecated oldfunction\n    at run (' + script + ':7:10)\n    at') === 0)
         done()
@@ -755,10 +756,16 @@ describe('node script.js', function () {
   })
 }())
 
-function captureChildStderr (args, callback) {
+function captureChildStderr (script, opts, callback) {
   var chunks = []
   var env = { PATH: process.env.PATH }
   var exec = process.execPath
+
+  var args = process.env.running_under_istanbul
+    ? opts.concat(path.join(__dirname, '..', 'node_modules', 'istanbul', 'lib', 'cli.js'),
+      'cover', '--dir=./coverage/child-' + uid(8), '--print=none', script)
+    : opts.concat(script)
+
   var proc = spawn(exec, args, {
     env: env
   })
