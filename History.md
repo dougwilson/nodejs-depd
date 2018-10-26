@@ -1,5 +1,5 @@
-2.x
-===
+2.0.0 / 2018-10-26
+==================
 
   * Drop support for Node.js 0.6
   * Replace internal `eval` usage with `Function` constructor
