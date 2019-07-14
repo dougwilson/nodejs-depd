@@ -19,7 +19,7 @@ function runScripts (fileNames) {
   console.log('> %s %s', exe, path.relative(cwd, fullPath))
 
   var proc = spawn(exe, [fullPath], {
-    'stdio': 'inherit'
+    stdio: 'inherit'
   })
 
   proc.on('exit', function () {
