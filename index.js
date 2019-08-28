@@ -46,7 +46,7 @@ function containsNamespace (str, namespace) {
  * Convert a data descriptor to accessor descriptor.
  */
 
-function convertDataDescriptorToAccessor (obj, prop, message) {
+function convertDataDescriptorToAccessor (obj, prop) {
   var descriptor = Object.getOwnPropertyDescriptor(obj, prop)
   var value = descriptor.value
 
@@ -460,7 +460,7 @@ function wrapproperty (obj, prop, message) {
 
   // convert data descriptor
   if ('value' in descriptor) {
-    descriptor = convertDataDescriptorToAccessor(obj, prop, message)
+    descriptor = convertDataDescriptorToAccessor(obj, prop)
   }
 
   var get = descriptor.get
