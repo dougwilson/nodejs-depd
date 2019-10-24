@@ -1,6 +1,6 @@
 /*!
  * depd
- * Copyright(c) 2014-2018 Douglas Christopher Wilson
+ * Copyright(c) 2014-2019 Douglas Christopher Wilson
  * MIT Licensed
  */
 
