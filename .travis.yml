@@ -16,6 +16,7 @@ node_js:
   - "11.15"
   - "12.16"
   - "13.11"
+  - "14.1"
 sudo: false
 cache:
   directories:
