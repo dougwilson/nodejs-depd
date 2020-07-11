@@ -37,7 +37,7 @@ install:
       # Remove benchmark dependencies
       npm rm --silent --save-dev benchmark beautify-benchmark
       # Remove coverage dependency
-      npm rm --silent --save-dev istanbul
+      npm rm --silent --save-dev nyc
       # Remove lint dependencies
       cmd.exe /c "node -pe `"Object.keys(require('./package').devDependencies).join('\n')`"" | `
         sls "^eslint(-|$)" | `

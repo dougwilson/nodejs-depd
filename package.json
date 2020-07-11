@@ -20,10 +20,9 @@
     "eslint-plugin-node": "9.2.0",
     "eslint-plugin-promise": "4.2.1",
     "eslint-plugin-standard": "4.0.1",
-    "istanbul": "0.4.5",
+    "nyc": "15.1.0",
     "mocha": "8.0.1",
-    "safe-buffer": "5.1.2",
-    "uid-safe": "2.1.5"
+    "safe-buffer": "5.1.2"
   },
   "files": [
     "lib/",
@@ -39,7 +38,7 @@
     "bench": "node benchmark/index.js",
     "lint": "eslint --plugin markdown --ext js,md .",
     "test": "mocha --reporter spec --bail test/",
-    "test-ci": "istanbul cover --print=none node_modules/mocha/bin/_mocha -- --reporter spec test/ && istanbul report lcovonly text-summary",
-    "test-cov": "istanbul cover --print=none node_modules/mocha/bin/_mocha -- --reporter dot test/ && istanbul report lcov text-summary"
+    "test-ci": "nyc --reporter=text npm test",
+    "test-cov": "nyc --reporter=html --reporter=text npm test"
   }
 }

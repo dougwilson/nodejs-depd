@@ -9,7 +9,6 @@ var path = require('path')
 var script = path.join(__dirname, 'fixtures', 'script.js')
 var spawn = require('child_process').spawn
 var strictlib = libs.strict
-var uid = require('uid-safe').sync
 
 describe('depd(namespace)', function () {
   it('creates deprecated function', function () {
@@ -761,11 +760,7 @@ function captureChildStderr (script, opts, callback) {
   var env = { PATH: process.env.PATH }
   var exec = process.execPath
 
-  var args = process.env.running_under_istanbul
-    ? opts.concat(path.join(__dirname, '..', 'node_modules', 'istanbul', 'lib', 'cli.js'),
-      'cover', '--dir=./coverage/child-' + uid(8), '--print=none', script)
-    : opts.concat(script)
-
+  var args = opts.concat(script)
   var proc = spawn(exec, args, {
     env: env
   })
