@@ -52,7 +52,7 @@ before_install:
     # browserify for browser testing
     # - install for Node.js > 0.8
     if [[ "$(cut -d. -f1 <<< "$TRAVIS_NODE_VERSION")" -gt 0 || "$(cut -d. -f2 <<< "$TRAVIS_NODE_VERSION")" -gt 8 ]]; then
-      npm install --silent --save-dev browserify
+      npm install --silent --save-dev browserify@15
     fi
   - |
     # nyc for coverage
