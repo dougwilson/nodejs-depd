@@ -3,7 +3,7 @@
 [![NPM Version][npm-version-image]][npm-url]
 [![NPM Downloads][npm-downloads-image]][npm-url]
 [![Node.js Version][node-image]][node-url]
-[![Linux Build][travis-image]][travis-url]
+[![Linux Build][github-actions-ci-image]][github-actions-ci-url]
 [![Windows Build][appveyor-image]][appveyor-url]
 [![Coverage Status][coveralls-image]][coveralls-url]
 
@@ -271,10 +271,10 @@ deprecate.property(exports, 'oldprop', 'oldprop >= 0.10')
 [appveyor-url]: https://ci.appveyor.com/project/dougwilson/nodejs-depd
 [coveralls-image]: https://badgen.net/coveralls/c/github/dougwilson/nodejs-depd/master
 [coveralls-url]: https://coveralls.io/r/dougwilson/nodejs-depd?branch=master
+[github-actions-ci-image]: https://badgen.net/github/checks/dougwilson/nodejs-depd/master?label=linux
+[github-actions-ci-url]: https://github.com/jshttp/dougwilson/nodejs-depd?query=workflow%3Aci
 [node-image]: https://badgen.net/npm/node/depd
 [node-url]: https://nodejs.org/en/download/
 [npm-downloads-image]: https://badgen.net/npm/dm/depd
 [npm-url]: https://npmjs.org/package/depd
 [npm-version-image]: https://badgen.net/npm/v/depd
-[travis-image]: https://badgen.net/travis/dougwilson/nodejs-depd/master?label=linux
-[travis-url]: https://travis-ci.org/dougwilson/nodejs-depd
