@@ -1,0 +1,127 @@
+name: ci
+
+on: [pull_request, push]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version:
+        - "0.8"
+        - "0.10"
+        - "0.12"
+        - "1.8"
+        - "2.5"
+        - "3.3"
+        - "4.9"
+        - "5.12"
+        - "6.17"
+        - "7.10"
+        - "8.17"
+        - "9.11"
+        - "10.21"
+        - "11.15"
+        - "12.18"
+        - "13.14"
+        - "14.5"
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install Node.js ${{ matrix.node-version }}
+      shell: bash -l {0}
+      run: |
+        nvm install --default ${{ matrix.node-version }}
+        dirname "$(npm which)" >> "$GITHUB_PATH"
+    - name: Configure npm
+      run: |
+        npm config set shrinkwrap false
+        if [[ "${{ matrix.node-version }}" == 0.* ]]; then
+          npm config set strict-ssl false
+        fi
+    - name: Remove non-test dependencies
+      run: |
+        npm rm --silent --save-dev benchmark beautify-benchmark
+    - name: Setup Node.js version-specific dependencies
+      run: |
+        # browserify for browser testing
+        # - install for Node.js > 0.8
+        if [[ "$(cut -d. -f1 <<< "${{ matrix.node-version }}")" -gt 0 || "$(cut -d. -f2 <<< "${{ matrix.node-version }}")" -gt 8 ]]; then
+          npm install --silent --save-dev browserify
+        fi
+        # eslint for linting
+        # - remove on Node.js < 8
+        if [[ "$(cut -d. -f1 <<< "${{ matrix.node-version }}")" -lt 8 ]]; then
+          node -pe 'Object.keys(require("./package").devDependencies).join("\n")' | \
+            grep -E '^eslint(-|$)' | \
+            sort -r | \
+            xargs -n1 npm rm --silent --save-dev
+        fi
+        # mocha for testing
+        # - use 2.x for Node.js < 0.10
+        # - use 3.x for Node.js < 4
+        # - use 5.x for Node.js < 6
+        # - use 6.x for Node.js < 8
+        # - use 7.x for Node.js < 10
+        if [[ "$(cut -d. -f1 <<< "${{ matrix.node-version }}")" -eq 0 && "$(cut -d. -f2 <<< "${{ matrix.node-version }}")" -lt 10 ]]; then
+          npm install --save-dev mocha@2.5.3
+        elif [[ "$(cut -d. -f1 <<< "${{ matrix.node-version }}")" -lt 4 ]]; then
+          npm install --save-dev mocha@3.5.3
+        elif [[ "$(cut -d. -f1 <<< "${{ matrix.node-version }}")" -lt 6 ]]; then
+          npm install --save-dev mocha@5.2.0
+        elif [[ "$(cut -d. -f1 <<< "${{ matrix.node-version }}")" -lt 8 ]]; then
+          npm install --save-dev mocha@6.2.2
+        elif [[ "$(cut -d. -f1 <<< "${{ matrix.node-version }}")" -lt 10 ]]; then
+          npm install --save-dev mocha@7.2.0
+        fi
+        # nyc for coverage
+        # - remove for Node.js < 0.10
+        # - use 10.x for Node.js < 4
+        # - use 11.x for Node.js < 6
+        # - use 14.x for Node.js < 8
+        if [[ "$(cut -d. -f1 <<< "${{ matrix.node-version }}")" -eq 0 && "$(cut -d. -f2 <<< "${{ matrix.node-version }}")" -lt 10 ]]; then
+          npm rm --save-dev nyc
+        elif [[ "$(cut -d. -f1 <<< "${{ matrix.node-version }}")" -lt 4 ]]; then
+          npm install --save-dev nyc@10.3.2
+        elif [[ "$(cut -d. -f1 <<< "${{ matrix.node-version }}")" -lt 6 ]]; then
+          npm install --save-dev nyc@11.9.0
+        elif [[ "$(cut -d. -f1 <<< "${{ matrix.node-version }}")" -lt 8 ]]; then
+          npm install --save-dev nyc@14.1.1
+        fi
+    - name: Install Node.js dependencies
+      run: |
+        npm install
+    - name: List environment
+      id: list_env
+      run: |
+        echo "node@$(node -v)"
+        echo "npm@$(npm -v)"
+        npm -s ls
+        npm -s ls --depth=0 | awk -F'[ @]' 'NR>1 && $2 { print "::set-output name=" $2 "::" $3 }'
+    - name: Run tests
+      run: |
+        if npm -ps ls nyc | grep -q nyc; then
+          npm run test-ci
+        else
+          npm test
+        fi
+    - name: Lint code
+      if: steps.list_env.outputs.eslint != ''
+      run: |
+        npm run lint
+    - name: Collect code coverage
+      uses: coverallsapp/github-action@master
+      if: steps.list_env.outputs.nyc != ''
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        flag-name: run-${{ matrix.test_number }}
+        parallel: true
+
+  coverage:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+    - name: Uploade code coverage
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.github_token }}
+        parallel-finished: true
