@@ -4,7 +4,7 @@ on: [pull_request, push]
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         name:
@@ -25,6 +25,10 @@ jobs:
         - Node.js 12.x
         - Node.js 13.x
         - Node.js 14.x
+        os:
+        - ubuntu-latest
+        - windows-latest
+
         include:
         - name: Node.js 0.8
           node-version: "0.8"
@@ -119,6 +123,7 @@ jobs:
       if: matrix.npm-i != ''
 
     - name: Setup Node.js version-specific dependencies
+      shell: bash
       run: |
         # eslint for linting
         # - remove on Node.js < 8
@@ -134,6 +139,7 @@ jobs:
 
     - name: List environment
       id: list_env
+      shell: bash
       run: |
         echo "node@$(node -v)"
         echo "npm@$(npm -v)"
@@ -141,6 +147,7 @@ jobs:
         npm -s ls --depth=0 | awk -F'[ @]' 'NR>1 && $2 { print "::set-output name=" $2 "::" $3 }'
 
     - name: Run tests
+      shell: bash
       run: |
         if npm -ps ls nyc | grep -q nyc; then
           npm run test-ci
