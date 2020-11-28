@@ -96,7 +96,7 @@ jobs:
           npm-i: browserify@15
 
         - name: Node.js 14.x
-          node-version: "14.7"
+          node-version: "14.15"
           npm-i: browserify@15
 
         - name: Node.js 15.x
