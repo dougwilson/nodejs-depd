@@ -27,17 +27,11 @@ jobs:
         - "14.5"
     steps:
     - uses: actions/checkout@v2
-    - name: Install Node.js ${{ matrix.node-version }}
-      shell: bash -l {0}
-      run: |
-        nvm install --default ${{ matrix.node-version }}
-        dirname "$(npm which)" >> "$GITHUB_PATH"
+    - uses: ./.github/actions/nvm
+      with:
+        node-version: ${{ matrix.node-version }}
     - name: Configure npm
-      run: |
-        npm config set shrinkwrap false
-        if [[ "${{ matrix.node-version }}" == 0.* ]]; then
-          npm config set strict-ssl false
-        fi
+      run: npm config set shrinkwrap false
     - name: Remove non-test dependencies
       run: |
         npm rm --silent --save-dev benchmark beautify-benchmark

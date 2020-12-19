@@ -1,0 +1,17 @@
+name: 'NVM'
+description: 'Run NVM to install Node.js'
+inputs:
+  node-version:
+    description: 'Node.js version to install'
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Install Node.js ${{ inputs.node-version }}
+      shell: bash -l {0}
+      run: |
+        nvm install --default ${{ inputs.node-version }}
+        if [[ "${{ inputs.node-version }}" == 0.* ]]; then
+          npm config set strict-ssl false
+        fi
+        dirname "$(npm which)" >> "$GITHUB_PATH"
