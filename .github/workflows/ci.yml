@@ -27,7 +27,7 @@ jobs:
         - "14.5"
         include:
         - node-version: "0.8"
-        - npm-rm: nyc
+          npm-rm: nyc
     steps:
     - uses: actions/checkout@v2
     - name: Install Node.js ${{ inputs.node-version }}
