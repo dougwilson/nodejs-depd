@@ -30,7 +30,7 @@ jobs:
           npm-rm: nyc
     steps:
     - uses: actions/checkout@v2
-    - name: Install Node.js ${{ inputs.node-version }}
+    - name: Install Node.js ${{ matrix.node-version }}
       uses: ./.github/actions/nvm
       with:
         node-version: ${{ matrix.node-version }}
@@ -45,7 +45,7 @@ jobs:
       with:
         name: ${{ matrix.npm-rm }}
         type: dev
-      if: ${{ matrix.npm-rm }} != ""
+      if: matrix.npm-rm != ''
     - name: Setup Node.js version-specific dependencies
       run: |
         # browserify for browser testing
