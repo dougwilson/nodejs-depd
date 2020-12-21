@@ -25,6 +25,9 @@ jobs:
         - "12.18"
         - "13.14"
         - "14.5"
+        include:
+        - node-version: "0.8"
+        - npm-rm: nyc
     steps:
     - uses: actions/checkout@v2
     - uses: ./.github/actions/nvm
@@ -36,6 +39,12 @@ jobs:
       with:
         name: beautify-benchmark benchmark
         type: dev
+    - name: Remove npm module(s) ${{ matrix.npm-rm }}
+      uses: ./.github/actions/npm-rm
+      with:
+        name: ${{ matrix.npm-rm }}
+        type: dev
+      if: ${{ matrix.npm-rm }} != ""
     - name: Setup Node.js version-specific dependencies
       run: |
         # browserify for browser testing
