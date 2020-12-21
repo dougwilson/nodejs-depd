@@ -52,6 +52,14 @@ jobs:
           npm-i: mocha@7.2.0
         - node-version: "9.11"
           npm-i: mocha@7.2.0
+        - node-version: "10.21"
+          npm-i: browserify
+        - node-version: "11.15"
+          npm-i: browserify
+        - node-version: "12.18"
+          npm-i: browserify
+        - node-version: "14.5"
+          npm-i: browserify
     steps:
     - uses: actions/checkout@v2
     - name: Install Node.js ${{ matrix.node-version }}
@@ -70,11 +78,6 @@ jobs:
       if: matrix.npm-i != ''
     - name: Setup Node.js version-specific dependencies
       run: |
-        # browserify for browser testing
-        # - install for Node.js > 0.8
-        if [[ "$(cut -d. -f1 <<< "${{ matrix.node-version }}")" -gt 0 || "$(cut -d. -f2 <<< "${{ matrix.node-version }}")" -gt 8 ]]; then
-          npm install --silent --save-dev browserify
-        fi
         # eslint for linting
         # - remove on Node.js < 8
         if [[ "$(cut -d. -f1 <<< "${{ matrix.node-version }}")" -lt 8 ]]; then
