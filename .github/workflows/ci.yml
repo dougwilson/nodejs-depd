@@ -27,25 +27,31 @@ jobs:
         - "14.5"
         include:
         - node-version: "0.8"
+          npm-i: mocha@2.5.3
           npm-rm: nyc
         - node-version: "0.10"
+          npm-i: mocha@3.5.3
           npm-rm: nyc
         - node-version: "0.12"
-          npm-i: nyc@10.3.2
+          npm-i: mocha@3.5.3 nyc@10.3.2
         - node-version: "1.8"
-          npm-i: nyc@10.3.2
+          npm-i: mocha@3.5.3 nyc@10.3.2
         - node-version: "2.5"
-          npm-i: nyc@10.3.2
+          npm-i: mocha@3.5.3 nyc@10.3.2
         - node-version: "3.3"
-          npm-i: nyc@10.3.2
+          npm-i: mocha@3.5.3 nyc@10.3.2
         - node-version: "4.9"
-          npm-i: nyc@11.9.0
+          npm-i: mocha@5.2.0 nyc@11.9.0
         - node-version: "5.12"
-          npm-i: nyc@11.9.0
+          npm-i: mocha@5.2.0 nyc@11.9.0
         - node-version: "6.17"
-          npm-i: nyc@14.1.1
+          npm-i: mocha@6.2.2 nyc@14.1.1
         - node-version: "7.10"
-          npm-i: nyc@14.1.1
+          npm-i: mocha@6.2.2 nyc@14.1.1
+        - node-version: "8.17"
+          npm-i: mocha@7.2.0
+        - node-version: "9.11"
+          npm-i: mocha@7.2.0
     steps:
     - uses: actions/checkout@v2
     - name: Install Node.js ${{ matrix.node-version }}
@@ -76,23 +82,6 @@ jobs:
             grep -E '^eslint(-|$)' | \
             sort -r | \
             xargs -n1 npm rm --silent --save-dev
-        fi
-        # mocha for testing
-        # - use 2.x for Node.js < 0.10
-        # - use 3.x for Node.js < 4
-        # - use 5.x for Node.js < 6
-        # - use 6.x for Node.js < 8
-        # - use 7.x for Node.js < 10
-        if [[ "$(cut -d. -f1 <<< "${{ matrix.node-version }}")" -eq 0 && "$(cut -d. -f2 <<< "${{ matrix.node-version }}")" -lt 10 ]]; then
-          npm install --save-dev mocha@2.5.3
-        elif [[ "$(cut -d. -f1 <<< "${{ matrix.node-version }}")" -lt 4 ]]; then
-          npm install --save-dev mocha@3.5.3
-        elif [[ "$(cut -d. -f1 <<< "${{ matrix.node-version }}")" -lt 6 ]]; then
-          npm install --save-dev mocha@5.2.0
-        elif [[ "$(cut -d. -f1 <<< "${{ matrix.node-version }}")" -lt 8 ]]; then
-          npm install --save-dev mocha@6.2.2
-        elif [[ "$(cut -d. -f1 <<< "${{ matrix.node-version }}")" -lt 10 ]]; then
-          npm install --save-dev mocha@7.2.0
         fi
     - name: Install Node.js dependencies
       run: |
