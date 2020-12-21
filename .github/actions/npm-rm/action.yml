@@ -1,0 +1,15 @@
+name: 'npm rm'
+description: 'Remove npm module(s)'
+inputs:
+  name:
+    description: 'NPM module(s) to remove'
+    required: true
+  type:
+    description: 'Type of npm module'
+    default: prod
+runs:
+  using: "composite"
+  steps:
+    - name: Remove ${{ inputs.type }} npm module(s) ${{ inputs.name }}
+      shell: bash -l {0}
+      run: npm rm --silent --save-${{ inputs.type }} ${{ inputs.name }}

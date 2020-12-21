@@ -32,9 +32,10 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - name: Configure npm
       run: npm config set shrinkwrap false
-    - name: Remove non-test dependencies
-      run: |
-        npm rm --silent --save-dev benchmark beautify-benchmark
+    - uses: ./.github/actions/npm-rm
+      with:
+        name: beautify-benchmark benchmark
+        type: dev
     - name: Setup Node.js version-specific dependencies
       run: |
         # browserify for browser testing
