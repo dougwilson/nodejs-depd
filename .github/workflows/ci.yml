@@ -30,7 +30,8 @@ jobs:
         - npm-rm: nyc
     steps:
     - uses: actions/checkout@v2
-    - uses: ./.github/actions/nvm
+    - name: Install Node.js ${{ inputs.node-version }}
+      uses: ./.github/actions/nvm
       with:
         node-version: ${{ matrix.node-version }}
     - name: Configure npm
