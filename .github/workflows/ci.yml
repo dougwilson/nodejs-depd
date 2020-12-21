@@ -82,6 +82,15 @@ jobs:
         elif [[ "$(cut -d. -f1 <<< "${{ matrix.node-version }}")" -lt 8 ]]; then
           npm install --save-dev nyc@14.1.1
         fi
+    - uses: ./.github/actions/npm-cond
+      with:
+        name: nyc
+        type: dev
+        cond: |
+          ${{ matrix.node-version }} -lt 0.10
+          ${{ matrix.node-version }} -lt 4.0
+          ${{ matrix.node-version }} -lt 6.0
+          ${{ matrix.node-version }} -lt 8.0
     - name: Install Node.js dependencies
       run: |
         npm install
