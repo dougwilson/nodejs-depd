@@ -8,12 +8,6 @@ jobs:
     strategy:
       matrix:
         node-version:
-        - "0.8"
-        - "0.10"
-        - "0.12"
-        - "1.8"
-        - "2.5"
-        - "3.3"
         - "4.9"
         - "5.12"
         - "6.17"
@@ -28,6 +22,16 @@ jobs:
         include:
         - node-version: "0.8"
           npm-rm: nyc
+        - node-version: "0.10"
+          npm-rm: nyc
+        - node-version: "0.12"
+          npm-i: nyc@10.3.2
+        - node-version: "1.8"
+          npm-i: nyc@10.3.2
+        - node-version: "2.5"
+          npm-i: nyc@10.3.2
+        - node-version: "3.3"
+          npm-i: nyc@10.3.2
     steps:
     - uses: actions/checkout@v2
     - name: Install Node.js ${{ matrix.node-version }}
@@ -46,6 +50,12 @@ jobs:
         name: ${{ matrix.npm-rm }}
         type: dev
       if: matrix.npm-rm != ''
+    - name: Install npm module(s) ${{ matrix.npm-i }}
+      uses: ./.github/actions/npm-install
+      with:
+        name: ${{ matrix.npm-i }}
+        type: dev
+      if: matrix.npm-i != ''
     - name: Setup Node.js version-specific dependencies
       run: |
         # browserify for browser testing
@@ -92,15 +102,6 @@ jobs:
         elif [[ "$(cut -d. -f1 <<< "${{ matrix.node-version }}")" -lt 8 ]]; then
           npm install --save-dev nyc@14.1.1
         fi
-    - uses: ./.github/actions/npm-cond
-      with:
-        name: nyc
-        type: dev
-        cond: |
-          ${{ matrix.node-version }} -lt 0.10
-          ${{ matrix.node-version }} -lt 4.0
-          ${{ matrix.node-version }} -lt 6.0
-          ${{ matrix.node-version }} -lt 8.0
     - name: Install Node.js dependencies
       run: |
         npm install
