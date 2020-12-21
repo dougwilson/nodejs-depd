@@ -98,20 +98,26 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+
     - name: Install Node.js ${{ matrix.node-version }}
       uses: ./.github/actions/nvm
       with:
         node-version: ${{ matrix.node-version }}
+
     - name: Configure npm
       run: npm config set shrinkwrap false
+
     - name: Remove non-test npm modules
       run: npm rm --silent --save-dev beautify-benchmark benchmark
+
     - name: Remove npm module(s) ${{ matrix.npm-rm }}
       run: npm rm --silent --save-dev ${{ matrix.npm-rm }}
       if: matrix.npm-rm != ''
+
     - name: Install npm module(s) ${{ matrix.npm-i }}
       run: npm install --save-dev ${{ matrix.npm-i }}
       if: matrix.npm-i != ''
+
     - name: Setup Node.js version-specific dependencies
       run: |
         # eslint for linting
@@ -122,9 +128,10 @@ jobs:
             sort -r | \
             xargs -n1 npm rm --silent --save-dev
         fi
+
     - name: Install Node.js dependencies
-      run: |
-        npm install
+      run: npm install
+
     - name: List environment
       id: list_env
       run: |
@@ -132,6 +139,7 @@ jobs:
         echo "npm@$(npm -v)"
         npm -s ls
         npm -s ls --depth=0 | awk -F'[ @]' 'NR>1 && $2 { print "::set-output name=" $2 "::" $3 }'
+
     - name: Run tests
       run: |
         if npm -ps ls nyc | grep -q nyc; then
@@ -139,10 +147,11 @@ jobs:
         else
           npm test
         fi
+
     - name: Lint code
       if: steps.list_env.outputs.eslint != ''
-      run: |
-        npm run lint
+      run: npm run lint
+
     - name: Collect code coverage
       uses: coverallsapp/github-action@master
       if: steps.list_env.outputs.nyc != ''
