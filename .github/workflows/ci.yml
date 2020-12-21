@@ -57,10 +57,7 @@ jobs:
         type: dev
       if: matrix.npm-rm != ''
     - name: Install npm module(s) ${{ matrix.npm-i }}
-      uses: ./.github/actions/npm-install
-      with:
-        name: ${{ matrix.npm-i }}
-        type: dev
+      run: npm install --save-dev ${{ matrix.npm-i }}
       if: matrix.npm-i != ''
     - name: Setup Node.js version-specific dependencies
       run: |
