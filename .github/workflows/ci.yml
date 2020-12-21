@@ -46,15 +46,10 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - name: Configure npm
       run: npm config set shrinkwrap false
-    - uses: ./.github/actions/npm-rm
-      with:
-        name: beautify-benchmark benchmark
-        type: dev
+    - name: Remove non-test npm modules
+      run: npm rm --silent --save-dev beautify-benchmark benchmark
     - name: Remove npm module(s) ${{ matrix.npm-rm }}
-      uses: ./.github/actions/npm-rm
-      with:
-        name: ${{ matrix.npm-rm }}
-        type: dev
+      run: npm rm --silent --save-dev ${{ matrix.npm-rm }}
       if: matrix.npm-rm != ''
     - name: Install npm module(s) ${{ matrix.npm-i }}
       run: npm install --save-dev ${{ matrix.npm-i }}
