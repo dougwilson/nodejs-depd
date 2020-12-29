@@ -80,7 +80,7 @@ jobs:
           npm-i: browserify@15 mocha@7.2.0
 
         - name: Node.js 10.x
-          node-version: "10.21"
+          node-version: "10.23"
           npm-i: browserify@15
 
         - name: Node.js 11.x
