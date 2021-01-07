@@ -361,6 +361,20 @@ function formatLocation (callSite) {
 }
 
 /**
+ * Create arguments string to keep arity.
+ */
+
+function createArgumentsString (arity) {
+  var str = ''
+
+  for (var i = 0; i < arity; i++) {
+    str += ', arg' + i
+  }
+
+  return str.substr(2)
+}
+
+/**
  * Get the stack as array of call sites.
  */
 
@@ -407,11 +421,23 @@ function wrapfunction (fn, message) {
 
   site.name = fn.name
 
-  function deprecatedfn () {
+  var deprecatedfn = function () {
     log.call(deprecate, message, site)
     return fn.apply(this, arguments)
   }
-  Object.defineProperty(deprecatedfn, 'length', { value: fn.length })
+  try {
+    Object.defineProperty(deprecatedfn, 'length', { value: fn.length })
+  } catch (e) {
+    // Fallback for NodeJS 2.5 and below
+    var args = createArgumentsString(fn.length)
+    // eslint-disable-next-line no-new-func
+    deprecatedfn = new Function('fn', 'log', 'deprecate', 'message', 'site',
+      '"use strict"\n' +
+      'return function (' + args + ') {' +
+      'log.call(deprecate, message, site)\n' +
+      'return fn.apply(this, arguments)\n' +
+      '}')(fn, log, this, message, site)
+  }
   return deprecatedfn
 }
 
