@@ -134,6 +134,10 @@ jobs:
             xargs -n1 npm rm --silent --save-dev
         fi
 
+    - name: Setup Windows-specific dependencies
+      run: npm rm --silent --save-dev nyc
+      if: matrix.os == 'windows-latest'
+
     - name: Install Node.js dependencies
       run: npm install
 
