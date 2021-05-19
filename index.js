@@ -421,13 +421,30 @@ function wrapfunction (fn, message) {
 
   site.name = fn.name
 
-  // eslint-disable-next-line no-new-func
-  var deprecatedfn = new Function('fn', 'log', 'deprecate', 'message', 'site',
-    '"use strict"\n' +
-    'return function (' + args + ') {' +
-    'log.call(deprecate, message, site)\n' +
-    'return fn.apply(this, arguments)\n' +
-    '}')(fn, log, this, message, site)
+  var deprecatedfn
+  var self = this
+  if (Object.defineProperty) {
+    try {
+      deprecatedfn = function () {
+        'use strict'
+        log.call(self, message, site)
+        return fn.apply(this, arguments)
+      }
+      Object.defineProperty(deprecatedfn, 'length', { value: fn.length })
+      Object.defineProperty(deprecatedfn, 'name', { value: fn.name })
+    } catch (err) {
+      // some node verions don't allow redefining of length, ignore them and fallback to eval
+    }
+  }
+  if (!deprecatedfn || deprecatedfn.length !== fn.length || deprecatedfn.name !== fn.name) {
+    // eslint-disable-next-line no-new-func
+    deprecatedfn = new Function('fn', 'log', 'deprecate', 'message', 'site',
+      '"use strict"\n' +
+      'return function (' + args + ') {' +
+      'log.call(deprecate, message, site)\n' +
+      'return fn.apply(this, arguments)\n' +
+      '}')(fn, log, this, message, site)
+  }
 
   return deprecatedfn
 }
