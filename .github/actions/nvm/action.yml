@@ -14,4 +14,4 @@ runs:
         if [[ "${{ inputs.node-version }}" == 0.* ]]; then
           npm config set strict-ssl false
         fi
-        dirname "$(npm which)" >> "$GITHUB_PATH"
+        dirname "$(which node)" >> "$GITHUB_PATH"
