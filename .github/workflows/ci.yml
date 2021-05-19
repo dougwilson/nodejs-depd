@@ -143,8 +143,8 @@ jobs:
       run: |
         echo "node@$(node -v)"
         echo "npm@$(npm -v)"
-        npm -s ls
-        npm -s ls --depth=0 | awk -F'[ @]' 'NR>1 && $2 { print "::set-output name=" $2 "::" $3 }'
+        npm -s ls ||:
+        (npm -s ls --depth=0 ||:) | awk -F'[ @]' 'NR>1 && $2 { print "::set-output name=" $2 "::" $3 }'
 
     - name: Run tests
       shell: bash
