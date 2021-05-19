@@ -1,0 +1,21 @@
+name: 'NVS'
+description: 'Run NVS to install Node.js'
+inputs:
+  node-version:
+    description: 'Node.js version to install'
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Install Node.js ${{ inputs.node-version }}
+      shell: bash -l {0}
+      run: |
+        git clone --branch v1.6.0 --depth 1 https://github.com/jasongin/nvs "$HOME/.nvs"
+        source "$HOME/.nvs/nvs.sh"
+        nvs remote add iojs https://iojs.org/dist/
+        nvs add ${{ inputs.node-version }}
+        nvs use ${{ inputs.node-version }}
+        if [[ "${{ inputs.node-version }}" == 0.* ]]; then
+          npm config set strict-ssl false
+        fi
+        dirname "$(npm which)" >> "$GITHUB_PATH"
