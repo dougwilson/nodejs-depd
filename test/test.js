@@ -10,6 +10,16 @@ var script = path.join(__dirname, 'fixtures', 'script.js')
 var spawn = require('child_process').spawn
 var strictlib = libs.strict
 
+function isNodeVersionGE (required) {
+  var nodeVersion = process.version.substr(1).split('.')
+  for (var i = 0; i < required.length; i++) {
+    if (+nodeVersion[i] < required[i]) {
+      return false
+    }
+  }
+  return true
+}
+
 describe('depd(namespace)', function () {
   it('creates deprecated function', function () {
     assert.strictEqual(typeof depd('test'), 'function')
@@ -730,9 +740,9 @@ describe('node script.js', function () {
 ;(function () {
   // --*-deprecation switches are 0.8+
   // no good way to feature detect this sync
-  var describe = /^v0\.6\./.test(process.version)
-    ? global.describe.skip
-    : global.describe
+  var describe = isNodeVersionGE([0, 8])
+    ? global.describe
+    : global.describe.skip
 
   describe('node --no-deprecation script.js', function () {
     it('should suppress deprecation message', function (done) {
@@ -754,6 +764,19 @@ describe('node script.js', function () {
     })
   })
 }())
+
+describe('node --disallow-code-generation-from-strings script.js', function () {
+  it('should run without error', function (done) {
+    if (!isNodeVersionGE([9])) this.skip() // --disallow-code-generation-from-strings is 9+
+
+    var basic = path.join(__dirname, 'fixtures', 'basic.js')
+    captureChildStderr(basic, ['--disallow-code-generation-from-strings'], function (err, stderr) {
+      if (err) return done(err)
+      assert.strictEqual(stderr, '')
+      done()
+    })
+  })
+})
 
 function captureChildStderr (script, opts, callback) {
   var chunks = []
