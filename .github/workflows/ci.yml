@@ -6,7 +6,7 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         name:
@@ -28,6 +28,9 @@ jobs:
         - Node.js 13.x
         - Node.js 14.x
         - Node.js 15.x
+        os:
+        - ubuntu-latest
+        - windows-latest
 
         include:
         - name: Node.js 0.8
