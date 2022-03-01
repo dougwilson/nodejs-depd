@@ -110,6 +110,14 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    - name: Install NVM
+      run: |
+        choco install nvm
+        Add-Content -Path $env:GITHUB_PATH -Value "$([System.Environment]::GetEnvironmentVariable("NVM_HOME","Machine"))"
+        Add-Content -Path $env:GITHUB_ENV -Value "NVM_HOME=$([System.Environment]::GetEnvironmentVariable("NVM_HOME","Machine"))"
+        Add-Content -Path $env:GITHUB_ENV -Value "NVM_SYMLINK=$([System.Environment]::GetEnvironmentVariable("NVM_SYMLINK","Machine"))"
+      if: runner.os == 'Windows'
+
     - name: Install Node.js ${{ matrix.node-version }}
       shell: bash -eo pipefail -l {0}
       run: |
