@@ -107,6 +107,13 @@ jobs:
           node-version: "15.8"
           npm-i: browserify@15
 
+        exclude:
+          - name: Node.js 0.8
+            os: windows-latest
+
+          - name: Node.js 0.10
+            os: windows-latest
+
     steps:
     - uses: actions/checkout@v2
 
