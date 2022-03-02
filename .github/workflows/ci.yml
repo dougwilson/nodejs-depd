@@ -121,7 +121,8 @@ jobs:
     - name: Install Node.js ${{ matrix.node-version }}
       shell: bash -eo pipefail -l {0}
       run: |
-        nvm install --default ${{ matrix.node-version }}
+        nvm install ${{ matrix.node-version }}
+        nvm use ${{ matrix.node-version }}
         if [[ "${{ matrix.node-version }}" == 0.* && "$(cut -d. -f2 <<< "${{ matrix.node-version }}")" -lt 10 ]]; then
           nvm install --alias=npm 0.10
           nvm use ${{ matrix.node-version }}
