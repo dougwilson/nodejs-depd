@@ -114,6 +114,7 @@ jobs:
       run: |
         choco install nvm
         Add-Content -Path $env:GITHUB_PATH -Value "$([System.Environment]::GetEnvironmentVariable("NVM_HOME","Machine"))"
+        Add-Content -Path $env:GITHUB_PATH -Value "$([System.Environment]::GetEnvironmentVariable("NVM_SYMLINK","Machine"))"
         Add-Content -Path $env:GITHUB_ENV -Value "NVM_HOME=$([System.Environment]::GetEnvironmentVariable("NVM_HOME","Machine"))"
         Add-Content -Path $env:GITHUB_ENV -Value "NVM_SYMLINK=$([System.Environment]::GetEnvironmentVariable("NVM_SYMLINK","Machine"))"
       if: runner.os == 'Windows'
