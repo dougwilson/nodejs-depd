@@ -113,15 +113,16 @@ jobs:
     - name: Install NVM
       run: |
         choco install nvm
-        Add-Content -Path $env:GITHUB_PATH -Value "$([System.Environment]::GetEnvironmentVariable("NVM_HOME","Machine"))"
-        Add-Content -Path $env:GITHUB_PATH -Value "$([System.Environment]::GetEnvironmentVariable("NVM_SYMLINK","Machine"))"
-        Add-Content -Path $env:GITHUB_ENV -Value "NVM_HOME=$([System.Environment]::GetEnvironmentVariable("NVM_HOME","Machine"))"
-        Add-Content -Path $env:GITHUB_ENV -Value "NVM_SYMLINK=$([System.Environment]::GetEnvironmentVariable("NVM_SYMLINK","Machine"))"
+        foreach ($key in "NVM_HOME", "NVM_SYMLINK") {
+          Add-Content -Path $env:GITHUB_PATH -Value "$([System.Environment]::GetEnvironmentVariable($key,"Machine"))"
+          Add-Content -Path $env:GITHUB_ENV -Value "$key=$([System.Environment]::GetEnvironmentVariable($key,"Machine"))"
+        }
       if: runner.os == 'Windows'
 
     - name: Install Node.js ${{ matrix.node-version }}
       shell: bash -eo pipefail -l {0}
       run: |
+        echo $PATH
         nvm install ${{ matrix.node-version }}
         nvm use ${{ matrix.node-version }}
         if [[ "${{ matrix.node-version }}" == 0.* && "$(cut -d. -f2 <<< "${{ matrix.node-version }}")" -lt 10 ]]; then
