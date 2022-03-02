@@ -184,6 +184,7 @@ jobs:
 
     - name: Collect code coverage
       if: steps.list_env.outputs.nyc != ''
+      shell: bash
       run: |
         if [[ -d ./coverage ]]; then
           mv ./coverage "./${{ matrix.name }}"
