@@ -113,25 +113,32 @@ jobs:
     - name: Install NVM
       run: |
         choco install nvm
-        foreach ($key in "NVM_HOME", "NVM_SYMLINK") {
-          Add-Content -Path $env:GITHUB_PATH -Value "$([System.Environment]::GetEnvironmentVariable($key,"Machine"))"
-          Add-Content -Path $env:GITHUB_ENV -Value "$key=$([System.Environment]::GetEnvironmentVariable($key,"Machine"))"
-        }
+        $NVM_HOME = "$([System.Environment]::GetEnvironmentVariable("NVM_HOME","Machine"))"
+        $NVM_SYMLINK = "$NVM_HOME\nodejs"
+        Add-Content -Path $env:GITHUB_PATH -Value "$NVM_HOME"
+        Add-Content -Path $env:GITHUB_PATH -Value "$NVM_SYMLINK"
+        Add-Content -Path $env:GITHUB_ENV -Value "NVM_HOME=$NVM_HOME"
+        Add-Content -Path $env:GITHUB_ENV -Value "NVM_SYMLINK=$NVM_SYMLINK"
       if: runner.os == 'Windows'
 
     - name: Install Node.js ${{ matrix.node-version }}
       shell: bash -eo pipefail -l {0}
       run: |
-        echo $PATH
         nvm install ${{ matrix.node-version }}
-        nvm use ${{ matrix.node-version }}
-        if [[ "${{ matrix.node-version }}" == 0.* && "$(cut -d. -f2 <<< "${{ matrix.node-version }}")" -lt 10 ]]; then
-          nvm install --alias=npm 0.10
-          nvm use ${{ matrix.node-version }}
-          sed -i '1s;^.*$;'"$(printf '#!%q' "$(nvm which npm)")"';' "$(readlink -f "$(which npm)")"
+        if [[ "${{ matrix.node-version }}" == 0.* ]]; then
+          if [[ "$(cut -d. -f2 <<< "${{ matrix.node-version }}")" -lt 10 ]]; then
+            nvm install --alias=npm 0.10
+            nvm use ${{ matrix.node-version }}
+            sed -i '1s;^.*$;'"$(printf '#!%q' "$(nvm which npm)")"';' "$(readlink -f "$(which npm)")"
+          fi
           npm config set strict-ssl false
         fi
-        dirname "$(nvm which ${{ matrix.node-version }})" >> "$GITHUB_PATH"
+        NODE_PATH="$(dirname "$(nvm which ${{ matrix.node-version }})")"
+        if [[ -d "${NODE_PATH}" ]]; then
+          echo "${NODE_PATH}" >> "${GITHUB_PATH}"
+        else
+          nvm use ${{ matrix.node-version }}
+        fi
 
     - name: Configure npm
       run: npm config set shrinkwrap false
