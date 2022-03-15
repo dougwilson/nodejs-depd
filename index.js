@@ -65,20 +65,6 @@ function convertDataDescriptorToAccessor (obj, prop, message) {
 }
 
 /**
- * Create arguments string to keep arity.
- */
-
-function createArgumentsString (arity) {
-  var str = ''
-
-  for (var i = 0; i < arity; i++) {
-    str += ', arg' + i
-  }
-
-  return str.substr(2)
-}
-
-/**
  * Create stack string from stack.
  */
 
@@ -375,6 +361,20 @@ function formatLocation (callSite) {
 }
 
 /**
+ * Create arguments string to keep arity.
+ */
+
+function createArgumentsString (arity) {
+  var str = ''
+
+  for (var i = 0; i < arity; i++) {
+    str += ', arg' + i
+  }
+
+  return str.substr(2)
+}
+
+/**
  * Get the stack as array of call sites.
  */
 
@@ -415,20 +415,29 @@ function wrapfunction (fn, message) {
     throw new TypeError('argument fn must be a function')
   }
 
-  var args = createArgumentsString(fn.length)
+  var deprecate = this
   var stack = getStack()
   var site = callSiteLocation(stack[1])
 
   site.name = fn.name
 
-  // eslint-disable-next-line no-new-func
-  var deprecatedfn = new Function('fn', 'log', 'deprecate', 'message', 'site',
-    '"use strict"\n' +
-    'return function (' + args + ') {' +
-    'log.call(deprecate, message, site)\n' +
-    'return fn.apply(this, arguments)\n' +
-    '}')(fn, log, this, message, site)
-
+  var deprecatedfn = function () {
+    log.call(deprecate, message, site)
+    return fn.apply(this, arguments)
+  }
+  try {
+    Object.defineProperty(deprecatedfn, 'length', { value: fn.length })
+  } catch (e) {
+    // Fallback for NodeJS 2.5 and below
+    var args = createArgumentsString(fn.length)
+    // eslint-disable-next-line no-new-func
+    deprecatedfn = new Function('fn', 'log', 'deprecate', 'message', 'site',
+      '"use strict"\n' +
+      'return function (' + args + ') {' +
+      'log.call(deprecate, message, site)\n' +
+      'return fn.apply(this, arguments)\n' +
+      '}')(fn, log, this, message, site)
+  }
   return deprecatedfn
 }
 
