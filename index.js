@@ -265,18 +265,18 @@ function log (message, site) {
  */
 
 function callSiteLocation (callSite) {
-  var file = callSite.getFileName() || '<anonymous>'
-  var line = callSite.getLineNumber()
-  var colm = callSite.getColumnNumber()
+  var file = callSite.getFileName ? (callSite.getFileName() || '<anonymous>') : '<unknown file>'
+  var line = callSite.getLineNumber ? callSite.getLineNumber() : '<unknown line number>'
+  var colm = callSite.getColumnNumber ? callSite.getColumnNumber() : '<unknown column number>'
 
-  if (callSite.isEval()) {
+  if (callSite.isEval && callSite.isEval()) {
     file = callSite.getEvalOrigin() + ', ' + file
   }
 
   var site = [file, line, colm]
 
   site.callSite = callSite
-  site.name = callSite.getFunctionName()
+  site.name = callSite.getFunctionName ? callSite.getFunctionName() : '<unknown function>'
 
   return site
 }
