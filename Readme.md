@@ -194,7 +194,7 @@ timestamp of message          namespace      |          |             location o
 ### Deprecating all calls to a function
 
 This will display a deprecated message about "oldfunction" being deprecated
-from "my-module" on STDERR.
+from "my-cool-module" on STDERR.
 
 ```js
 var deprecate = require('depd')('my-cool-module')
@@ -214,7 +214,7 @@ exports.oldfunction = deprecate.function(function () {
 ### Conditionally deprecating a function call
 
 This will display a deprecated message about "weirdfunction" being deprecated
-from "my-module" on STDERR when called with less than 2 arguments.
+from "my-cool-module" on STDERR when called with less than 2 arguments.
 
 ```js
 var deprecate = require('depd')('my-cool-module')
@@ -248,7 +248,7 @@ exports.weirdfunction = function () {
 ### Deprecating property access
 
 This will display a deprecated message about "oldprop" being deprecated
-from "my-module" on STDERR when accessed. A deprecation will be displayed
+from "my-cool-module" on STDERR when accessed. A deprecation will be displayed
 when setting the value and when getting the value.
 
 ```js
