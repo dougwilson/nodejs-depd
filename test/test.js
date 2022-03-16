@@ -10,6 +10,10 @@ var script = path.join(__dirname, 'fixtures', 'script.js')
 var spawn = require('child_process').spawn
 var strictlib = libs.strict
 
+if (process.env.ENABLE_COREJS_ERROR_POLYFILL) { // cf. PR #48
+  require('core-js/modules/es.error.cause')
+}
+
 describe('depd(namespace)', function () {
   it('creates deprecated function', function () {
     assert.strictEqual(typeof depd('test'), 'function')

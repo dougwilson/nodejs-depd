@@ -265,9 +265,8 @@ function log (message, site) {
  */
 
 function callSiteLocation (callSite) {
-  var functionName, site
+  var site
   if (callSite) {
-    functionName = callSite.getFunctionName()
     var file = callSite.getFileName() || '<anonymous>'
     var line = callSite.getLineNumber()
     var colm = callSite.getColumnNumber()
@@ -275,15 +274,14 @@ function callSiteLocation (callSite) {
       file = callSite.getEvalOrigin() + ', ' + file
     }
     site = [file, line, colm]
+    site.callSite = callSite
+    site.name = callSite.getFunctionName()
   } else {
-    // eslint-disable-next-line no-param-reassign
-    callSite = {}
-    callSite.getThis = function () { return null }
-    functionName = '<unknown function>'
     site = ['<unknown file>', '<unknown line>', '<unknown column>']
+    site.callSite = {}
+    site.callSite.getThis = function () { return null }
+    site.name = '<unknown function>'
   }
-  site.callSite = callSite
-  site.name = functionName
   return site
 }
 

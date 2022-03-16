@@ -18,6 +18,7 @@ jobs:
         - io.js 3.x
         - Node.js 4.x
         - Node.js 5.x
+        - Node.js 5.x with core-js polyfill
         - Node.js 6.x
         - Node.js 7.x
         - Node.js 8.x
@@ -62,6 +63,11 @@ jobs:
         - name: Node.js 5.x
           node-version: "5.12"
           npm-i: browserify@15 mocha@5.2.0 nyc@11.9.0
+
+        - name: Node.js 5.x with core-js polyfill
+          node-version: "5.12"
+          npm-i: browserify@15 mocha@5.2.0 nyc@11.9.0 core-js@3
+          ENABLE_COREJS_ERROR_POLYFILL: true
 
         - name: Node.js 6.x
           node-version: "6.17"
@@ -158,6 +164,8 @@ jobs:
 
     - name: Run tests
       shell: bash
+      env:
+        ENABLE_COREJS_ERROR_POLYFILL: ${{ matrix.ENABLE_COREJS_ERROR_POLYFILL }}
       run: |
         if npm -ps ls nyc | grep -q nyc; then
           npm run test-ci
