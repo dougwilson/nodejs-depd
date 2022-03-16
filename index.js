@@ -265,19 +265,25 @@ function log (message, site) {
  */
 
 function callSiteLocation (callSite) {
-  var file = callSite.getFileName ? (callSite.getFileName() || '<anonymous>') : '<unknown file>'
-  var line = callSite.getLineNumber ? callSite.getLineNumber() : '<unknown line number>'
-  var colm = callSite.getColumnNumber ? callSite.getColumnNumber() : '<unknown column number>'
-
-  if (callSite.isEval && callSite.isEval()) {
-    file = callSite.getEvalOrigin() + ', ' + file
+  var functionName, site
+  if (callSite) {
+    functionName = callSite.getFunctionName()
+    var file = callSite.getFileName() || '<anonymous>'
+    var line = callSite.getLineNumber()
+    var colm = callSite.getColumnNumber()
+    if (callSite.isEval()) {
+      file = callSite.getEvalOrigin() + ', ' + file
+    }
+    site = [file, line, colm]
+  } else {
+    // eslint-disable-next-line no-param-reassign
+    callSite = {}
+    callSite.getThis = function () { return null }
+    functionName = '<unknown function>'
+    site = ['<unknown file>', '<unknown line>', '<unknown column>']
   }
-
-  var site = [file, line, colm]
-
   site.callSite = callSite
-  site.name = callSite.getFunctionName ? callSite.getFunctionName() : '<unknown function>'
-
+  site.name = functionName
   return site
 }
 
@@ -388,6 +394,12 @@ function getStack () {
 
   // capture the stack
   Error.captureStackTrace(obj)
+
+  if (typeof obj.stack === 'string' || obj.stack instanceof String) {
+    // Means that prepareObjectStackTrace failed, obj.stack is not a CallSite array.
+    // We fallback to returning an empty array.
+    return []
+  }
 
   // slice this function off the top
   var stack = obj.stack.slice(1)
