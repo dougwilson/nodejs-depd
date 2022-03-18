@@ -265,19 +265,23 @@ function log (message, site) {
  */
 
 function callSiteLocation (callSite) {
-  var file = callSite.getFileName() || '<anonymous>'
-  var line = callSite.getLineNumber()
-  var colm = callSite.getColumnNumber()
-
-  if (callSite.isEval()) {
-    file = callSite.getEvalOrigin() + ', ' + file
+  var site
+  if (callSite) {
+    var file = callSite.getFileName() || '<anonymous>'
+    var line = callSite.getLineNumber()
+    var colm = callSite.getColumnNumber()
+    if (callSite.isEval()) {
+      file = callSite.getEvalOrigin() + ', ' + file
+    }
+    site = [file, line, colm]
+    site.callSite = callSite
+    site.name = callSite.getFunctionName()
+  } else {
+    site = ['<unknown file>', '<unknown line>', '<unknown column>']
+    site.callSite = {}
+    site.callSite.getThis = function () { return null }
+    site.name = '<unknown function>'
   }
-
-  var site = [file, line, colm]
-
-  site.callSite = callSite
-  site.name = callSite.getFunctionName()
-
   return site
 }
 
@@ -388,6 +392,12 @@ function getStack () {
 
   // capture the stack
   Error.captureStackTrace(obj)
+
+  if (typeof obj.stack === 'string' || obj.stack instanceof String) {
+    // Means that prepareObjectStackTrace failed, obj.stack is not a CallSite array.
+    // We fallback to returning an empty array.
+    return []
+  }
 
   // slice this function off the top
   var stack = obj.stack.slice(1)
